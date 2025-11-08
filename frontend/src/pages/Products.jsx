@@ -3,7 +3,7 @@ import axios from '../api/axios'
 import { useDispatch } from 'react-redux'
 import { addItemToCart } from '../redux/slices/cartSlice'
 import { toast } from 'react-hot-toast'
-import { useSearchParams, Link } from 'react-router-dom' // 1. Import useSearchParams
+import { useSearchParams, Link } from 'react-router-dom'
 
 export default function Products() {
   const [products, setProducts] = useState([])
@@ -11,25 +11,27 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState('')
   const dispatch = useDispatch()
 
-  // 2. Get the search params from the URL
   const [searchParams] = useSearchParams()
-  const categoryQuery = searchParams.get('category') // Get 'category' from /products?category=...
+  const categoryQuery = searchParams.get('category') 
 
-  // 3. Update useEffect to re-fetch if the categoryQuery changes
   useEffect(() => {
     fetchProducts()
-  }, [categoryQuery]) // Run this effect when categoryQuery changes
+  }, [categoryQuery]) 
 
-  // 4. Update fetchProducts to use the categoryQuery
+  // --- THIS FUNCTION IS NOW FIXED ---
   const fetchProducts = async () => {
     setLoading(true)
     try {
-      // Build the request URL. If categoryQuery exists, add it as a param.
-      const requestUrl = categoryQuery 
-        ? `/products?category=${categoryQuery}` 
-        : '/products'
-        
-      const { data } = await axios.get(requestUrl)
+      // 1. Create a params object
+      const params = {}
+      if (categoryQuery) {
+        params.category = categoryQuery // e.g., { category: "Home & Kitchen" }
+      }
+
+      // 2. Pass the params object to axios. 
+      //    axios will automatically encode it correctly.
+      const { data } = await axios.get('/products', { params: params })
+      
       setProducts(data.products || [])
     } catch (err) {
       console.error(err)
@@ -47,7 +49,6 @@ export default function Products() {
     toast.success(`${product.name} added to cart!`);
   };
 
-  // 5. This filter now runs ON TOP of the category-filtered data from the backend
   const filteredProducts = products.filter(p =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -58,12 +59,10 @@ export default function Products() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          {/* 6. Show a dynamic title */}
           <h1 className="text-4xl font-bold mb-4">
             {categoryQuery ? `Browsing: ${categoryQuery}` : 'Browse All Products'}
           </h1>
           
-          {/* Add a 'Clear' button if a category is selected */}
           {categoryQuery && (
             <Link to="/products" className="text-teal-600 hover:underline mb-4 block">
               Clear filter and show all products
