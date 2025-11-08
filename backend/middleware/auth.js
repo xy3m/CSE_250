@@ -6,7 +6,19 @@ const User = require('../models/userModel');
 
 // Check if user is authenticated
 exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
-  const { token } = req.cookies;
+  let token;
+
+  // 1. Check for token in cookies
+  if (req.cookies.token) {
+    token = req.cookies.token;
+  } 
+  // 2. If not in cookies, check for Bearer token in Authorization header
+  else if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
 
   if (!token) {
     return next(new ErrorHandler('Please login to access this resource', 401));

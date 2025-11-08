@@ -1,25 +1,29 @@
-const express = require('express');
-const router = express.Router();
 
+const express = require('express')
+const router = express.Router()
 const {
-  getProducts,
-  getProductDetails,
   createProduct,
   updateProduct,
   deleteProduct,
-  getVendorProducts
-} = require('../controllers/productController');
+  getProducts,
+  decreaseStockOnOrder,
+  getVendorProducts, // <-- ADD THIS LINE
+  getProductDetails, // <-- ADD THIS LINE
+} = require('../controllers/productController')
+const { isAuthenticatedUser, authorizeRoles } = require('../middleware/auth')
 
-const { isAuthenticatedUser, authorizeRoles } = require('../middleware/auth');
+router.route('/')
+  .get(getProducts)
+  .post(isAuthenticatedUser, authorizeRoles('vendor', 'admin'), createProduct)
+router
+  .route('/vendor')
+  .get(isAuthenticatedUser, authorizeRoles('vendor', 'admin'), getVendorProducts)
+router.route('/:id')
+  .get(getProductDetails) // <-- ADD THIS LINE
+  .put(isAuthenticatedUser, authorizeRoles('vendor', 'admin'), updateProduct)
+  .delete(isAuthenticatedUser, authorizeRoles('vendor', 'admin'), deleteProduct)
 
-// Public routes
-router.get('/products', getProducts);
-router.get('/product/:id', getProductDetails);
+router.route('/:id/decrease-stock')
+  .patch(isAuthenticatedUser, decreaseStockOnOrder)
 
-// Vendor routes
-router.post('/product/new', isAuthenticatedUser, authorizeRoles('vendor', 'admin'), createProduct);
-router.put('/product/:id', isAuthenticatedUser, authorizeRoles('vendor', 'admin'), updateProduct);
-router.delete('/product/:id', isAuthenticatedUser, authorizeRoles('vendor', 'admin'), deleteProduct);
-router.get('/vendor/products', isAuthenticatedUser, authorizeRoles('vendor', 'admin'), getVendorProducts);
-
-module.exports = router;
+module.exports = router

@@ -7,7 +7,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const { data } = await axios.post('/register', userData);
-      localStorage.setItem('token', data.token);
+      // We will let the 'fulfilled' reducer handle localStorage
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Registration failed');
@@ -21,7 +21,7 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const { data } = await axios.post('/login', credentials);
-      localStorage.setItem('token', data.token);
+      // We will let the 'fulfilled' reducer handle localStorage
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
@@ -48,7 +48,7 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await axios.get('/logout');
-      localStorage.removeItem('token');
+      // We will let the 'fulfilled' reducer handle localStorage
       return null;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Logout failed');
@@ -56,15 +56,20 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+// === THIS IS THE UPDATED INITIAL STATE ===
+const initialState = {
+  // Load user and token from localStorage
+  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null,
+  token: localStorage.getItem('token') || null,
+  loading: false,
+  error: null,
+  // Set isAuthenticated based on token
+  isAuthenticated: localStorage.getItem('token') ? true : false,
+};
+
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    user: null,
-    token: localStorage.getItem('token') || null,
-    loading: false,
-    error: null,
-    isAuthenticated: false,
-  },
+  initialState: initialState, // Use the initialState defined above
   reducers: {
     clearError: (state) => {
       state.error = null;
@@ -82,6 +87,9 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        // Also set localStorage on register
+        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        localStorage.setItem('token', action.payload.token);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -92,11 +100,15 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+      // === THIS IS THE UPDATED LOGIN REDUCER ===
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        // Manage localStorage
+        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        localStorage.setItem('token', action.payload.token);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -108,10 +120,14 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
       })
       // Logout
+      // === THIS IS THE UPDATED LOGOUT REDUCER ===
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        // Clear localStorage
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
       });
   },
 });

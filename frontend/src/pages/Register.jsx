@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import axios from '../api/axios'
 import { toast } from 'react-hot-toast'
+import { useDispatch } from 'react-redux' // 1. Import useDispatch
+import { registerUser } from '../redux/slices/authSlice' // 2. Import the registerUser thunk
 
 export default function Register() {
   const navigate = useNavigate()
+  const dispatch = useDispatch() // 3. Get the dispatch function
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [loading, setLoading] = useState(false)
 
@@ -16,11 +18,13 @@ export default function Register() {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.post('/register', form)
+      // 4. Dispatch the registerUser action
+      await dispatch(registerUser(form)).unwrap()
+
       toast.success('Registration successful! Please login.')
-      navigate('/login')
+      navigate('/login') // 5. Navigate to login
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Registration failed')
+      toast.error(err.payload || 'Registration failed')
     } finally {
       setLoading(false)
     }

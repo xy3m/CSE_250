@@ -66,11 +66,11 @@ const productSchema = new mongoose.Schema({
   stock: {
     type: Number,
     required: [true, 'Please enter product stock'],
-    maxLength: [5, 'Product stock cannot exceed 5 digits'],
-    default: 0
+    max: [99999, 'Product stock cannot exceed 5 digits'], // maxLength replaced with max for number
+    default: 0,
   },
   vendor: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: true
   },

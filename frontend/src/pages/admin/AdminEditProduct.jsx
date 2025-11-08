@@ -1,46 +1,65 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import axios from '../../api/axios' // Import axios
-import { toast } from 'react-hot-toast' // Import toast
+import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import axios from '../../api/axios'
+import { toast } from 'react-hot-toast'
 
-export default function AddProduct() {
+export default function EditProduct() {
+  const { id } = useParams()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({
-    name: '',
-    description: '',
-    price: '',
-    stock: '',
-    category: 'Electronics',
-    imageUrl: ''
+  const [form, setForm] = useState({ 
+    name:'', 
+    description:'', 
+    price:'', 
+    stock:'', 
+    category:'', 
+    imageUrl:'' 
   })
 
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const { data } = await axios.get(`/products/${id}`)
+        setForm({
+          name: data.product.name,
+          description: data.product.description,
+          price: data.product.price,
+          stock: data.product.stock,
+          category: data.product.category,
+          imageUrl: data.product.images?.[0]?.url || ''
+        })
+      } catch {
+        toast.error('Failed to load product')
+        navigate('/vendor/products') // Go back if product fails to load
+      }
+    }
+    fetchProduct()
+  }, [id, navigate])
+
   const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    setForm({...form, [e.target.name]: e.target.value})
   }
 
   const handleSubmit = async e => {
     e.preventDefault()
     setLoading(true)
-    
-    // This is the data structure for the backend
+
     const productData = {
       name: form.name,
       description: form.description,
       price: Number(form.price),
       stock: Number(form.stock),
       category: form.category,
-      // The backend expects an 'images' array 
       images: [{ public_id: "temp_id", url: form.imageUrl }]
     }
 
     try {
-      // POST to /api/v1/products (which uses productController.createProduct) [cite: 51, 52]
-      await axios.post('/products', productData)
-      toast.success('Product added successfully!')
-      navigate('/vendor/dashboard') // Go to dashboard after success
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to add product')
+      // This route comes from productRoutes.js (PUT /:id)
+      await axios.put(`/products/${id}`, productData)
+      toast.success('Product updated')
+      navigate('/admin/dashboard') // <-- CHANGE THIS LINE
+    } catch {
+      toast.error('Update failed')
     } finally {
       setLoading(false)
     }
@@ -48,7 +67,7 @@ export default function AddProduct() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">➕ Add New Product</h1>
+      <h1 className="text-2xl font-bold mb-6">✏️ Edit Product</h1>
       <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
         <input
           name="name"
@@ -91,7 +110,6 @@ export default function AddProduct() {
           value={form.category}
           onChange={handleChange}
         >
-          {/* Categories from productModel.js  */}
           <option>Electronics</option>
           <option>Clothing</option>
           <option>Footwear</option>
@@ -112,10 +130,10 @@ export default function AddProduct() {
         />
         <button
           type="submit"
-          className="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded w-full"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full"
           disabled={loading}
         >
-          {loading ? 'Adding Product...' : 'Add Product'}
+          {loading ? 'Updating...' : 'Update Product'}
         </button>
       </form>
     </div>

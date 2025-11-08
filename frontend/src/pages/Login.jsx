@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import axios from '../api/axios'
 import { toast } from 'react-hot-toast'
+import { useDispatch } from 'react-redux' // 1. Import useDispatch
+import { loginUser } from '../redux/slices/authSlice' // 2. Import the loginUser thunk
 
 export default function Login() {
   const navigate = useNavigate()
+  const dispatch = useDispatch() // 3. Get the dispatch function
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
 
@@ -16,18 +18,18 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
     try {
-      const { data } = await axios.post('/login', form)
+      // 4. Dispatch the loginUser action and unwrap the result
+      const resultAction = await dispatch(loginUser(form))
+      const { user } = resultAction.payload
       
-      // Store user in localStorage
-      localStorage.setItem('user', JSON.stringify(data.user))
-      localStorage.setItem('token', data.token)
+      toast.success(`Welcome back, ${user.name}!`)
       
-      toast.success(`Welcome back, ${data.user.name}!`)
-      
-      // Everyone goes to products page after login
+      // 5. Navigate to products. The Navbar will update automatically.
       navigate('/products')
+
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed')
+      // The thunk will return the error message
+      toast.error(err.payload || 'Login failed')
     } finally {
       setLoading(false)
     }

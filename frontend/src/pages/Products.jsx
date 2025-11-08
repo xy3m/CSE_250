@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react'
 import axios from '../api/axios'
+import { useDispatch } from 'react-redux'; // <-- ADDED
+import { addItemToCart } from '../redux/slices/cartSlice'; // <-- ADDED
+import { toast } from 'react-hot-toast'; // <-- ADDED
 
 export default function Products() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const dispatch = useDispatch(); // <-- ADDED
 
   useEffect(() => {
     fetchProducts()
@@ -20,6 +24,16 @@ export default function Products() {
       setLoading(false)
     }
   }
+
+  // NEW FUNCTION to handle adding to cart
+  const handleAddToCart = (product) => {
+    if (product.stock === 0) {
+      toast.error('Sorry, this product is out of stock');
+      return;
+    }
+    dispatch(addItemToCart(product));
+    toast.success(`${product.name} added to cart!`);
+  };
 
   const filteredProducts = products.filter(p =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -65,8 +79,14 @@ export default function Products() {
                   <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-teal-600 font-bold text-2xl">৳{product.price}</span>
-                    <button className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition">
-                      Buy Now
+                    
+                    {/* === BUTTON UPDATED === */}
+                    <button 
+                      onClick={() => handleAddToCart(product)}
+                      className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition disabled:bg-gray-400"
+                      disabled={product.stock === 0} // Disable button if out of stock
+                    >
+                      {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
                     </button>
                   </div>
                   {product.stock === 0 && (

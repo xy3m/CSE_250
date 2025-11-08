@@ -27,14 +27,15 @@ const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const vendorRoutes = require('./routes/vendorRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 // Use routes
 app.use('/api/v1', authRoutes);
-app.use('/api/v1', productRoutes);
+app.use('/api/v1/products', productRoutes);
 app.use('/api/v1', orderRoutes);
 app.use('/api/v1', vendorRoutes);
 app.use('/api/v1', adminRoutes);
-
+app.use('/api/v1', userRoutes);
 // Root route
 app.get('/', (req, res) => {
   res.json({
