@@ -1,25 +1,22 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux' // Import Redux hooks
+import { useSelector, useDispatch } from 'react-redux' 
 import { toast } from 'react-hot-toast'
-import { logoutUser } from '../redux/slices/authSlice' // Import the logout action
+import { logoutUser } from '../redux/slices/authSlice' 
 
 export default function Navbar() {
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
 
-  // Get all state from Redux, not local state
   const { user, isAuthenticated } = useSelector((state) => state.auth)
   const { cartItems } = useSelector((state) => state.cart)
 
   const handleLogout = () => {
-    // Dispatch the Redux logout action
     dispatch(logoutUser()) 
     toast.success('Logged out successfully')
     navigate('/')
   }
 
-  // Use Redux state for conditional logic
   if (!isAuthenticated && location.pathname === '/') return null
 
   return (
@@ -31,7 +28,6 @@ export default function Navbar() {
           </Link>
 
           <div className="flex gap-6 items-center">
-            {/* Use Redux state for conditional logic */}
             {!isAuthenticated ? (
               <>
                 <Link to="/login" className="hover:text-teal-600">Login</Link>
@@ -57,8 +53,6 @@ export default function Navbar() {
                 {/* Vendor-specific links */}
                 {user.role === 'vendor' && (
                   <>
-                    {/* === "+ Add Product" LINK REMOVED FROM HERE === */}
-                    
                     <Link to="/vendor/orders" className="hover:text-teal-600 font-medium">
                       My Orders
                     </Link>
@@ -75,14 +69,24 @@ export default function Navbar() {
                   </Link>
                 )}
 
+                {/* === UPDATED USER BLOCK === */}
                 {user.role === 'user' && (
-                  <Link 
-                    to="/vendor/apply" 
-                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 font-medium"
-                  >
-                    Apply as Vendor
-                  </Link>
+                  <>
+                    <Link 
+                      to="/orders/me" 
+                      className="hover:text-teal-600 font-medium"
+                    >
+                      My Orders
+                    </Link>
+                    <Link 
+                      to="/vendor/apply" 
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 font-medium"
+                    >
+                      Apply as Vendor
+                    </Link>
+                  </>
                 )}
+                {/* ========================= */}
 
                 <span className="text-gray-600">Hi, {user.name}</span>
                 <button 

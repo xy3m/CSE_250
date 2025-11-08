@@ -1,4 +1,3 @@
-// frontend/src/pages/Cart.jsx
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,13 +9,24 @@ export default function Cart() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { cartItems } = useSelector((state) => state.cart);
-  const { user } = useSelector((state) => state.auth);
-
-  // State for selected address
-  const [selectedAddress, setSelectedAddress] = useState(
-    user?.addresses?.find(a => a.isDefault)?._id || null
-  );
   
+  // NEW: State for the shipping form
+  const [shippingInfo, setShippingInfo] = useState({
+    name: '',
+    phone: '',
+    addressLine: '',
+    city: '',
+    division: '',
+    postalCode: ''
+  });
+
+  const handleShippingChange = (e) => {
+    setShippingInfo({
+      ...shippingInfo,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const handleQuantityChange = (id, quantity) => {
     dispatch(updateCartQuantity({ productId: id, quantity: Number(quantity) }));
   };
@@ -32,13 +42,17 @@ export default function Cart() {
   const taxPrice = 0; // Example: 0 tax
   const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
+  // NEW: Check if all required shipping fields are filled
+  const isShippingFormValid = () => {
+    return shippingInfo.name && shippingInfo.phone && shippingInfo.addressLine && shippingInfo.city && shippingInfo.division && shippingInfo.postalCode;
+  };
+
   const handleCheckout = async () => {
-    if (!selectedAddress) {
-      toast.error('Please select a shipping address');
+    // Validate the form before submitting
+    if (!isShippingFormValid()) {
+      toast.error('Please fill in all shipping details');
       return;
     }
-
-    const shippingInfo = user.addresses.find(a => a._id === selectedAddress);
     
     const orderData = {
       orderItems: cartItems.map(item => ({
@@ -49,10 +63,11 @@ export default function Cart() {
         image: item.image,
         vendor: item.vendor
       })),
+      // Use the shipping info from the form
       shippingInfo: {
         name: shippingInfo.name,
         phone: shippingInfo.phone,
-        address: shippingInfo.addressLine,
+        address: shippingInfo.addressLine, // Note: backend orderModel expects 'address'
         city: shippingInfo.city,
         division: shippingInfo.division,
         postalCode: shippingInfo.postalCode,
@@ -72,7 +87,7 @@ export default function Cart() {
       await axios.post('/order/new', orderData);
       dispatch(clearCart());
       toast.success('Order placed successfully!');
-      navigate('/orders/me'); // Redirect to a new "My Orders" page
+      navigate('/orders/me'); // Redirect to "My Orders" page
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to place order');
     }
@@ -113,29 +128,70 @@ export default function Cart() {
       </div>
 
       <div className="lg:col-span-1 space-y-4">
+        
+        {/* === NEW SHIPPING FORM === */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4">Shipping Address</h2>
-          {!user?.addresses || user.addresses.length === 0 ? (
-            <p>Please <Link to="/me/update" className="text-teal-600">add an address</Link> to your profile.</p>
-          ) : (
-            user.addresses.map(addr => (
-              <div key={addr._id} className="p-2 border rounded-md mb-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="address"
-                    value={addr._id}
-                    checked={selectedAddress === addr._id}
-                    onChange={() => setSelectedAddress(addr._id)}
-                  />
-                  <div>
-                    <strong>{addr.name}</strong>, {addr.addressLine}, {addr.city}
-                  </div>
-                </label>
-              </div>
-            ))
-          )}
+          <h2 className="text-2xl font-bold mb-4">Shipping Details</h2>
+          <form className="space-y-3">
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              className="w-full p-2 border rounded"
+              value={shippingInfo.name}
+              onChange={handleShippingChange}
+              required
+            />
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone Number"
+              className="w-full p-2 border rounded"
+              value={shippingInfo.phone}
+              onChange={handleShippingChange}
+              required
+            />
+            <input
+              type="text"
+              name="addressLine"
+              placeholder="Address Line (e.g., House, Road)"
+              className="w-full p-2 border rounded"
+              value={shippingInfo.addressLine}
+              onChange={handleShippingChange}
+              required
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="text"
+                name="city"
+                placeholder="City"
+                className="w-full p-2 border rounded"
+                value={shippingInfo.city}
+                onChange={handleShippingChange}
+                required
+              />
+              <input
+                type="text"
+                name="postalCode"
+                placeholder="Postal Code"
+                className="w-full p-2 border rounded"
+                value={shippingInfo.postalCode}
+                onChange={handleShippingChange}
+                required
+              />
+            </div>
+            <input
+              type="text"
+              name="division"
+              placeholder="Division (e.g., Dhaka, Sylhet)"
+              className="w-full p-2 border rounded"
+              value={shippingInfo.division}
+              onChange={handleShippingChange}
+              required
+            />
+          </form>
         </div>
+        {/* ========================== */}
 
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
@@ -148,7 +204,8 @@ export default function Cart() {
           </div>
           <button
             onClick={handleCheckout}
-            disabled={cartItems.length === 0 || !selectedAddress}
+            // Update disabled check
+            disabled={cartItems.length === 0 || !isShippingFormValid()}
             className="w-full bg-teal-600 text-white p-3 rounded-lg hover:bg-teal-700 mt-4 disabled:bg-gray-400"
           >
             Place Order (Cash on Delivery)
