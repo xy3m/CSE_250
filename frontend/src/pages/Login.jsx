@@ -25,7 +25,7 @@ export default function Login() {
       toast.success(`Welcome back, ${user.name}!`)
       
       // 5. Navigate to products. The Navbar will update automatically.
-      navigate('/products')
+      navigate('/dashboard') // <-- CHANGE THIS LINE
 
     } catch (err) {
       // The thunk will return the error message

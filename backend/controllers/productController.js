@@ -51,12 +51,26 @@ exports.deleteProduct = async (req, res, next) => {
 }
 
 // Get All Products
+// Get All Products
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({})
-    res.json({ success: true, products })
+    let filter = {}; // Start with an empty filter
+
+    // NEW: If a 'category' is passed in the URL (e.g., /products?category=Electronics)
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+
+    // You can add more filters here later, like for search:
+    // if (req.query.keyword) {
+    //   filter.name = { $regex: req.query.keyword, $options: 'i' };
+    // }
+
+    const products = await Product.find(filter); // Pass the filter to .find()
+
+    res.json({ success: true, products });
   } catch (err) {
-    next(err)
+    next(err);
   }
 }
 

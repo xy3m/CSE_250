@@ -1,6 +1,15 @@
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { Navigate } from 'react-router-dom'
 
 export default function Home() {
+  const { isAuthenticated } = useSelector((state) => state.auth)
+
+  // If user is already logged in, redirect them to the new dashboard
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />
+  }
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white">
       <div className="max-w-7xl mx-auto px-4 py-20 text-center">

@@ -1,22 +1,35 @@
 import { useState, useEffect } from 'react'
 import axios from '../api/axios'
-import { useDispatch } from 'react-redux'; // <-- ADDED
-import { addItemToCart } from '../redux/slices/cartSlice'; // <-- ADDED
-import { toast } from 'react-hot-toast'; // <-- ADDED
+import { useDispatch } from 'react-redux'
+import { addItemToCart } from '../redux/slices/cartSlice'
+import { toast } from 'react-hot-toast'
+import { useSearchParams, Link } from 'react-router-dom' // 1. Import useSearchParams
 
 export default function Products() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const dispatch = useDispatch(); // <-- ADDED
+  const dispatch = useDispatch()
 
+  // 2. Get the search params from the URL
+  const [searchParams] = useSearchParams()
+  const categoryQuery = searchParams.get('category') // Get 'category' from /products?category=...
+
+  // 3. Update useEffect to re-fetch if the categoryQuery changes
   useEffect(() => {
     fetchProducts()
-  }, [])
+  }, [categoryQuery]) // Run this effect when categoryQuery changes
 
+  // 4. Update fetchProducts to use the categoryQuery
   const fetchProducts = async () => {
+    setLoading(true)
     try {
-      const { data } = await axios.get('/products')
+      // Build the request URL. If categoryQuery exists, add it as a param.
+      const requestUrl = categoryQuery 
+        ? `/products?category=${categoryQuery}` 
+        : '/products'
+        
+      const { data } = await axios.get(requestUrl)
       setProducts(data.products || [])
     } catch (err) {
       console.error(err)
@@ -25,7 +38,6 @@ export default function Products() {
     }
   }
 
-  // NEW FUNCTION to handle adding to cart
   const handleAddToCart = (product) => {
     if (product.stock === 0) {
       toast.error('Sorry, this product is out of stock');
@@ -35,6 +47,7 @@ export default function Products() {
     toast.success(`${product.name} added to cart!`);
   };
 
+  // 5. This filter now runs ON TOP of the category-filtered data from the backend
   const filteredProducts = products.filter(p =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -45,8 +58,18 @@ export default function Products() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">Browse Products</h1>
+          {/* 6. Show a dynamic title */}
+          <h1 className="text-4xl font-bold mb-4">
+            {categoryQuery ? `Browsing: ${categoryQuery}` : 'Browse All Products'}
+          </h1>
           
+          {/* Add a 'Clear' button if a category is selected */}
+          {categoryQuery && (
+            <Link to="/products" className="text-teal-600 hover:underline mb-4 block">
+              Clear filter and show all products
+            </Link>
+          )}
+
           {/* Search Bar */}
           <input
             type="text"
@@ -63,7 +86,7 @@ export default function Products() {
         ) : filteredProducts.length === 0 ? (
           <div className="text-center text-gray-600 py-20">
             <p className="text-2xl mb-4">No products found</p>
-            <p>Try a different search or check back later!</p>
+            <p>Try a different search or clear the category filter.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -79,12 +102,10 @@ export default function Products() {
                   <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-teal-600 font-bold text-2xl">৳{product.price}</span>
-                    
-                    {/* === BUTTON UPDATED === */}
                     <button 
                       onClick={() => handleAddToCart(product)}
                       className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition disabled:bg-gray-400"
-                      disabled={product.stock === 0} // Disable button if out of stock
+                      disabled={product.stock === 0}
                     >
                       {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
                     </button>

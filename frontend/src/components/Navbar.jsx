@@ -17,17 +17,21 @@ export default function Navbar() {
     navigate('/')
   }
 
+  // If user is not authenticated AND is on the homepage, show nothing
   if (!isAuthenticated && location.pathname === '/') return null
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <Link to={isAuthenticated ? '/products' : '/'} className="text-2xl font-bold text-teal-600">
+          
+          {/* Logo link: Goes to dashboard if logged in, homepage if not */}
+          <Link to={isAuthenticated ? '/dashboard' : '/'} className="text-2xl font-bold text-teal-600">
             🛒 HaatBazar
           </Link>
 
           <div className="flex gap-6 items-center">
+            {/* Logged-out state: Show Login/Register */}
             {!isAuthenticated ? (
               <>
                 <Link to="/login" className="hover:text-teal-600">Login</Link>
@@ -36,11 +40,14 @@ export default function Navbar() {
                 </Link>
               </>
             ) : (
+              // Logged-in state: Show dashboard links
               <>
-                <Link to="/products" className="hover:text-teal-600 font-medium">
+                {/* "Shop" link now goes to the dashboard */}
+                <Link to="/dashboard" className="hover:text-teal-600 font-medium">
                   Shop
                 </Link>
 
+                {/* Cart link */}
                 <Link to="/cart" className="relative hover:text-teal-600 font-medium">
                   🛒 Cart
                   {cartItems.length > 0 && (
@@ -69,7 +76,7 @@ export default function Navbar() {
                   </Link>
                 )}
 
-                {/* === UPDATED USER BLOCK === */}
+                {/* User-specific links */}
                 {user.role === 'user' && (
                   <>
                     <Link 
@@ -86,8 +93,8 @@ export default function Navbar() {
                     </Link>
                   </>
                 )}
-                {/* ========================= */}
 
+                {/* User info and Logout */}
                 <span className="text-gray-600">Hi, {user.name}</span>
                 <button 
                   onClick={handleLogout}

@@ -23,6 +23,7 @@ import VendorApplication from './pages/vendor/VendorApplication.jsx'
 // Page Imports (Admin)
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import AdminEditProduct from './pages/admin/AdminEditProduct.jsx'
+import Dashboard from './pages/Dashboard.jsx' // 1. IMPORT THE NEW PAGE
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/products/edit/:id" element={<AdminEditProduct />} /> {/* <-- 2. ADD THIS ROUTE */}
         <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} /> {/* 2. ADD THIS ROUTE */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/products" element={<Products />} />
