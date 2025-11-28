@@ -65,11 +65,19 @@ export default function AdminDashboard() {
 
   // Load Data on Mount
   useEffect(() => {
-    if (user?.role !== 'admin') {
+    // 1. If user is null (Logged out), just go home silently.
+    if (!user) {
+      navigate('/');
+      return;
+    }
+
+    // 2. If user exists but is NOT an admin, THEN show the error.
+    if (user.role !== 'admin') {
       toast.error('Access denied. Admins only.')
       navigate('/')
       return
     }
+    
     fetchApplications()
     fetchAllProducts()
     fetchUsers() 
