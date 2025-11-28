@@ -11,11 +11,8 @@ export default function Navbar() {
   const { user, isAuthenticated } = useSelector((state) => state.auth)
   const { cartItems } = useSelector((state) => state.cart)
 
-  // === CRASH PREVENTION FIX ===
-  // If Redux says we are authenticated but 'user' is null/undefined, 
-  // use an empty object to prevent "Cannot read property of null" errors.
+  // Crash prevention check
   const safeUser = user || {}; 
-  // ===========================
 
   const handleLogout = async () => {
     await dispatch(logoutUser()) 
@@ -23,7 +20,6 @@ export default function Navbar() {
     navigate('/')
   }
 
-  // If not authenticated and on home page, hide navbar (optional style choice)
   if (!isAuthenticated && location.pathname === '/') return null
 
   return (
@@ -31,7 +27,11 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           
-          <Link to={isAuthenticated ? '/dashboard' : '/'} className="text-2xl font-bold text-teal-600">
+          {/* Logo Link Logic: Admin goes to Admin Dashboard, others go to Shop */}
+          <Link 
+            to={isAuthenticated ? (safeUser.role === 'admin' ? '/admin/dashboard' : '/dashboard') : '/'} 
+            className="text-2xl font-bold text-teal-600"
+          >
             🛒 HaatBazar
           </Link>
 
@@ -45,24 +45,29 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link to="/dashboard" className="hover:text-teal-600 font-medium">
-                  Shop
-                </Link>
+                {/* === HIDE SHOPPING LINKS FOR ADMINS === */}
+                {safeUser.role !== 'admin' && (
+                  <>
+                    <Link to="/dashboard" className="hover:text-teal-600 font-medium">
+                      Shop
+                    </Link>
 
-                <Link to="/cart" className="relative hover:text-teal-600 font-medium">
-                  🛒 Cart
-                  {cartItems.length > 0 && (
-                    <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
-                    </span>
-                  )}
-                </Link>
+                    <Link to="/cart" className="relative hover:text-teal-600 font-medium">
+                      🛒 Cart
+                      {cartItems.length > 0 && (
+                        <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                          {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+                        </span>
+                      )}
+                    </Link>
 
-                <Link to="/orders/me" className="hover:text-teal-600 font-medium">
-                  History
-                </Link>
+                    <Link to="/orders/me" className="hover:text-teal-600 font-medium">
+                      History
+                    </Link>
+                  </>
+                )}
 
-                {/* === VENDOR LINKS (Use safeUser) === */}
+                {/* === VENDOR LINKS === */}
                 {safeUser.role === 'vendor' && (
                   <>
                     <Link to="/vendor/orders" className="hover:text-teal-600 font-medium">
@@ -74,49 +79,48 @@ export default function Navbar() {
                   </>
                 )}
 
-                {/* === ADMIN LINKS (Use safeUser) === */}
+                {/* === ADMIN LINKS === */}
                 {safeUser.role === 'admin' && (
                   <Link to="/admin/dashboard" className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                    Admin Panel
+                    Admin Dashboard
                   </Link>
                 )}
 
-                {/* === USER LINKS (Use safeUser) === */}
+                {/* === USER LINKS (Apply Logic) === */}
                 {safeUser.role === 'user' && (
                   <>
-                    {/* Case 1: No Real Application yet -> Show Apply Button */}
                     {(!safeUser.vendorInfo || !safeUser.vendorInfo.applicationDate) && (
-                      <Link 
-                        to="/vendor/apply" 
-                        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 font-medium"
-                      >
+                      <Link to="/vendor/apply" className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 font-medium">
                         Apply as Vendor
                       </Link>
                     )}
-
-                    {/* Case 2: Real Application Pending */}
                     {safeUser.vendorInfo?.applicationDate && safeUser.vendorInfo.status === 'pending' && (
                       <span className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg font-medium border border-yellow-200 cursor-default">
                         ⏳ Application Pending
                       </span>
                     )}
-
-                    {/* Case 3: Application Rejected -> Show Re-apply Button */}
                     {safeUser.vendorInfo?.status === 'rejected' && (
-                      <Link 
-                        to="/vendor/apply" 
-                        className="bg-red-100 text-red-700 px-4 py-2 rounded-lg font-medium border border-red-200 hover:bg-red-200"
-                      >
+                      <Link to="/vendor/apply" className="bg-red-100 text-red-700 px-4 py-2 rounded-lg font-medium border border-red-200 hover:bg-red-200">
                         ❌ Rejected (Apply Again)
                       </Link>
                     )}
                   </>
                 )}
 
-                {/* Replace the old <span> with this <Link> */}
-    <Link to="/profile" className="text-gray-600 hidden md:block hover:text-teal-600 font-medium">
-  👤 {safeUser.name}
-    </Link>
+                {/* === PROFILE LINK (Hide for Admins) === */}
+                {safeUser.role !== 'admin' && (
+                  <Link to="/profile" className="text-gray-600 hidden md:block hover:text-teal-600 font-medium">
+                    👤 {safeUser.name}
+                  </Link>
+                )}
+
+                {/* Optional: Show just the name for Admins without a link */}
+                {safeUser.role === 'admin' && (
+                  <span className="text-gray-600 hidden md:block font-medium">
+                    🛡️ {safeUser.name}
+                  </span>
+                )}
+                
                 <button 
                   onClick={handleLogout}
                   className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"

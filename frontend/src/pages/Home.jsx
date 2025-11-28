@@ -3,15 +3,21 @@ import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
 export default function Home() {
-  const { isAuthenticated } = useSelector((state) => state.auth)
+  const { user, isAuthenticated } = useSelector((state) => state.auth)
 
-  // If user is already logged in, redirect them to the new dashboard
+  // If logged in:
   if (isAuthenticated) {
+    // If Admin -> Go to Admin Dashboard
+    if (user?.role === 'admin') {
+      return <Navigate to="/admin/dashboard" replace />
+    }
+    // Everyone else -> Go to Shop Dashboard
     return <Navigate to="/dashboard" replace />
   }
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white">
+      {/* ... keep existing JSX ... */}
       <div className="max-w-7xl mx-auto px-4 py-20 text-center">
         <h1 className="text-6xl font-bold text-gray-900 mb-6">
           Welcome to HaatBazar
