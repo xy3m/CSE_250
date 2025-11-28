@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux' // 1. Import useDispatch
+import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-hot-toast'
 import axios from '../../api/axios'
 import { useNavigate } from 'react-router-dom'
-import { getUserProfile } from '../../redux/slices/authSlice' // 2. Import the action
+import { getUserProfile } from '../../redux/slices/authSlice'
 
 export default function VendorApplication() {
   const navigate = useNavigate()
-  const dispatch = useDispatch() // 3. Initialize dispatch
+  const dispatch = useDispatch()
   const { user, isAuthenticated } = useSelector(state => state.auth)
   const [loading, setLoading] = useState(false)
   
@@ -26,12 +26,21 @@ export default function VendorApplication() {
 
   const handleSubmit = async e => {
     e.preventDefault()
+
+    // === NEW VALIDATION CHECK ===
+    // Check if Tax ID is exactly 13 digits (numbers only)
+    const taxIdRegex = /^\d{13}$/;
+    if (!taxIdRegex.test(form.taxId)) {
+      toast.error('Tax ID must be exactly 13 digits');
+      return; // Stop here, don't submit to server
+    }
+    // ============================
+
     setLoading(true)
 
     try {
       await axios.post('/vendor/apply', form)
       
-      // 4. Fetch updated profile so Navbar "Apply" button changes to "Pending"
       await dispatch(getUserProfile()) 
 
       toast.success('✅ Vendor application submitted! Awaiting admin approval.')
@@ -63,8 +72,6 @@ export default function VendorApplication() {
     }
   }
 
-  // ... (Keep the rest of your component code exactly the same)
-  // ...
   if (!isAuthenticated) {
     return (
       <div className="max-w-2xl mx-auto p-6 bg-yellow-50 border border-yellow-200 rounded">
@@ -93,7 +100,6 @@ export default function VendorApplication() {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* ... (Keep your form fields exactly as they were) ... */}
         
         <div>
           <label className="form-label">Business Name *</label>
@@ -149,6 +155,7 @@ export default function VendorApplication() {
             onChange={handleChange}
             required
           />
+          <p className="text-xs text-gray-500 mt-1">Must be exactly 13 digits.</p>
         </div>
 
         <div>
