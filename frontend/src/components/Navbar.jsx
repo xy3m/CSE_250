@@ -23,110 +23,106 @@ export default function Navbar() {
   if (!isAuthenticated && location.pathname === '/') return null
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex justify-between items-center">
+    // Update 1: Glassmorphism effect on the nav container
+    <nav className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
           
-          {/* Logo Link Logic: Admin goes to Admin Dashboard, others go to Shop */}
+          {/* Logo with gradient text */}
           <Link 
             to={isAuthenticated ? (safeUser.role === 'admin' ? '/admin/dashboard' : '/dashboard') : '/'} 
-            className="text-2xl font-bold text-teal-600"
+            className="text-3xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent tracking-tight"
           >
             🛒 HaatBazar
           </Link>
 
-          <div className="flex gap-6 items-center">
+          <div className="flex gap-8 items-center">
             {!isAuthenticated ? (
               <>
-                <Link to="/login" className="hover:text-teal-600">Login</Link>
-                <Link to="/register" className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">
-                  Register
+                <Link to="/login" className="text-slate-600 hover:text-teal-600 font-medium transition-colors">Login</Link>
+                <Link to="/register" className="btn-primary">
+                  Get Started
                 </Link>
               </>
             ) : (
               <>
-                {/* === HIDE SHOPPING LINKS FOR ADMINS === */}
+                {/* Navigation Links with hover effects */}
                 {safeUser.role !== 'admin' && (
-                  <>
-                    <Link to="/dashboard" className="hover:text-teal-600 font-medium">
-                      Shop
-                    </Link>
-
-                    <Link to="/cart" className="relative hover:text-teal-600 font-medium">
-                      🛒 Cart
+                  <div className="hidden md:flex gap-6">
+                    <Link to="/dashboard" className="text-slate-600 hover:text-teal-600 font-medium transition-colors">Shop</Link>
+                    <Link to="/cart" className="relative text-slate-600 hover:text-teal-600 font-medium transition-colors">
+                      Cart
                       {cartItems.length > 0 && (
-                        <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        <span className="absolute -top-2 -right-3 bg-rose-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
                           {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
                         </span>
                       )}
                     </Link>
-
-                    <Link to="/orders/me" className="hover:text-teal-600 font-medium">
-                      History
-                    </Link>
-                  </>
+                    <Link to="/orders/me" className="text-slate-600 hover:text-teal-600 font-medium transition-colors">History</Link>
+                  </div>
                 )}
 
-                {/* === VENDOR LINKS === */}
+                {/* Vendor Links */}
                 {safeUser.role === 'vendor' && (
-                  <>
-                    <Link to="/vendor/orders" className="hover:text-teal-600 font-medium">
-                      Received Orders
-                    </Link>
-                    <Link to="/vendor/dashboard" className="hover:text-teal-600 font-medium">
-                      My Store
-                    </Link>
-                  </>
+                  <div className="hidden md:flex gap-6">
+                    <Link to="/vendor/orders" className="text-slate-600 hover:text-teal-600 font-medium">Orders</Link>
+                    <Link to="/vendor/dashboard" className="text-slate-600 hover:text-teal-600 font-medium">My Store</Link>
+                  </div>
                 )}
 
-                {/* === ADMIN LINKS === */}
+                {/* Admin Link */}
                 {safeUser.role === 'admin' && (
-                  <Link to="/admin/dashboard" className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                    Admin Dashboard
+                  <Link to="/admin/dashboard" className="text-orange-600 font-semibold bg-orange-50 px-4 py-2 rounded-lg">
+                    Admin Panel
                   </Link>
                 )}
 
-                {/* === USER LINKS (Apply Logic) === */}
-                {safeUser.role === 'user' && (
-                  <>
-                    {(!safeUser.vendorInfo || !safeUser.vendorInfo.applicationDate) && (
-                      <Link to="/vendor/apply" className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 font-medium">
-                        Apply as Vendor
-                      </Link>
-                    )}
-                    {safeUser.vendorInfo?.applicationDate && safeUser.vendorInfo.status === 'pending' && (
-                      <span className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg font-medium border border-yellow-200 cursor-default">
-                        ⏳ Application Pending
-                      </span>
-                    )}
-                    {safeUser.vendorInfo?.status === 'rejected' && (
-                      <Link to="/vendor/apply" className="bg-red-100 text-red-700 px-4 py-2 rounded-lg font-medium border border-red-200 hover:bg-red-200">
-                        ❌ Rejected (Apply Again)
-                      </Link>
-                    )}
-                  </>
-                )}
+                <div className="h-6 w-px bg-slate-200 mx-2"></div>
 
-                {/* === PROFILE LINK (Hide for Admins) === */}
-                {safeUser.role !== 'admin' && (
-                  <Link to="/profile" className="text-gray-600 hidden md:block hover:text-teal-600 font-medium">
-                    👤 {safeUser.name}
-                  </Link>
-                )}
+                {/* User Profile & Logout */}
+                <div className="flex items-center gap-4">
+                  {safeUser.role === 'user' && (
+                    <>
+                      {(!safeUser.vendorInfo || !safeUser.vendorInfo.applicationDate) && (
+                        <Link to="/vendor/apply" className="text-sm font-medium text-teal-600 hover:bg-teal-50 px-3 py-2 rounded-lg transition-colors">
+                          Become a Vendor
+                        </Link>
+                      )}
+                      {safeUser.vendorInfo?.applicationDate && safeUser.vendorInfo.status === 'pending' && (
+                        <span className="text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-medium">
+                          Pending Approval
+                        </span>
+                      )}
+                      {safeUser.vendorInfo?.status === 'rejected' && (
+                        <Link to="/vendor/apply" className="text-xs bg-rose-100 text-rose-700 px-3 py-1 rounded-full font-medium hover:bg-rose-200 transition-colors">
+                          Rejected (Retry)
+                        </Link>
+                      )}
+                    </>
+                  )}
 
-                {/* Optional: Show just the name for Admins without a link */}
-                {safeUser.role === 'admin' && (
-                  <span className="text-gray-600 hidden md:block font-medium">
-                    🛡️ {safeUser.name}
-                  </span>
-                )}
-                
-                <button 
-                  onClick={handleLogout}
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                >
-                  Logout
-                </button>
+                  {safeUser.role !== 'admin' && (
+                    <Link to="/profile" className="flex items-center gap-2 text-slate-700 hover:text-teal-600 font-medium transition-colors">
+                      <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-700">
+                        {safeUser.name?.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="hidden md:block">{safeUser.name}</span>
+                    </Link>
+                  )}
+
+                  {safeUser.role === 'admin' && (
+                    <span className="text-gray-600 hidden md:block font-medium">
+                      🛡️ {safeUser.name}
+                    </span>
+                  )}
+
+                  <button 
+                    onClick={handleLogout}
+                    className="text-sm text-rose-500 hover:text-rose-700 font-medium transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
               </>
             )}
           </div>
