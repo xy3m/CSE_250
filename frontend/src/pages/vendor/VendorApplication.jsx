@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-hot-toast'
-import axios from '../../api/axios'
 import { useNavigate } from 'react-router-dom'
+import axios from '../../api/axios'
 import { getUserProfile } from '../../redux/slices/authSlice'
 
 export default function VendorApplication() {
@@ -27,24 +27,26 @@ export default function VendorApplication() {
   const handleSubmit = async e => {
     e.preventDefault()
 
-    // === NEW VALIDATION CHECK ===
+    // === 1. CLIENT-SIDE VALIDATION ===
     // Check if Tax ID is exactly 13 digits (numbers only)
     const taxIdRegex = /^\d{13}$/;
     if (!taxIdRegex.test(form.taxId)) {
       toast.error('Tax ID must be exactly 13 digits');
-      return; // Stop here, don't submit to server
+      return; 
     }
-    // ============================
+    // ================================
 
     setLoading(true)
 
     try {
       await axios.post('/vendor/apply', form)
       
+      // Refresh user profile to update status in Redux
       await dispatch(getUserProfile()) 
 
       toast.success('✅ Vendor application submitted! Awaiting admin approval.')
       
+      // Clear form
       setForm({
         businessName: '',
         businessAddress: '',
@@ -59,12 +61,21 @@ export default function VendorApplication() {
     } catch (error) {
       const message = error.response?.data?.message || 'Application submission failed'
       
+      // === ERROR HANDLING LOGIC ===
       if (message.includes('pending')) {
         toast.info('ℹ️ You already have a pending vendor application')
-      } else if (message.includes('already a vendor')) {
+      } 
+      else if (message.includes('already a vendor')) {
         toast.success('✅ You are already a vendor!')
         setTimeout(() => navigate('/'), 1500)
-      } else {
+      } 
+      // === SPECIFIC DUPLICATE TAX ID ERROR ===
+      else if (message.includes('Tax ID is already linked')) {
+        toast.error('⛔ This Tax ID is already in use by another account.')
+        // Optional: Clear the invalid Tax ID to prompt re-entry
+        setForm(prev => ({ ...prev, taxId: '' }))
+      }
+      else {
         toast.error(`❌ ${message}`)
       }
     } finally {
@@ -145,12 +156,12 @@ export default function VendorApplication() {
         </div>
 
         <div>
-          <label className="form-label">Tax ID / Business License *</label>
+          <label className="form-label">Business Identification Number (BIN) *</label>
           <input
             className="input-field"
             type="text"
             name="taxId"
-            placeholder="TIN or Business Registration Number"
+            placeholder="Business Identification Number (BIN)"
             value={form.taxId}
             onChange={handleChange}
             required

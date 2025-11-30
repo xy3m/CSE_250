@@ -200,7 +200,7 @@ export default function AdminDashboard() {
                         
                         {/* === TAX ID SECTION === */}
                         <div>
-                          <strong className="text-gray-600">Tax ID:</strong>
+                          <strong className="text-gray-600">BIN: </strong>
                           <p className="flex items-center gap-2">
                             {app.vendorInfo.taxId}
                             
