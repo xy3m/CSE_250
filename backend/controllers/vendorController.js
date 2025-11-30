@@ -2,6 +2,7 @@
 const User = require('../models/userModel');
 const Product = require('../models/productModel');
 const Order = require('../models/orderModel');
+const TaxId = require('../models/taxIdModel'); // <--- 1. IMPORT ADDED
 const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 
@@ -22,7 +23,22 @@ exports.applyVendor = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler('You are already a vendor', 400));
   }
 
-  // 2. Create the Vendor Info Object
+  // === 2. NEW CHECK: IS TAX ID ALREADY USED? ===
+  // We look for ANY user who has this specific taxId in their vendorInfo
+  const existingVendor = await User.findOne({ 'vendorInfo.taxId': taxId });
+  
+  if (existingVendor) {
+    // If found, stop immediately and return an error
+    return next(new ErrorHandler('This Tax ID is already linked to another account.', 400));
+  }
+  // =============================================
+
+  // === 3. VERIFY TAX ID (Check whitelist) ===
+  // Check if the provided taxId exists in our "Valid Tax IDs" database
+  const isValidTaxId = await TaxId.findOne({ number: taxId });
+  // ==========================================
+
+  // 4. Create the Vendor Info Object
   const newVendorInfo = {
     businessName,
     businessType,
@@ -32,10 +48,15 @@ exports.applyVendor = catchAsyncErrors(async (req, res, next) => {
     description,
     status: 'pending',
     isApproved: false,
-    applicationDate: Date.now() // This generates the timestamp
+    
+    // === SAVE VERIFICATION STATUS ===
+    taxIdVerified: !!isValidTaxId, // true if found in DB, false otherwise
+    // ================================
+
+    applicationDate: Date.now() 
   };
 
-  // 3. Force Update using findByIdAndUpdate
+  // 5. Force Update using findByIdAndUpdate
   // This bypasses "save" logic and forces the data into the DB
   await User.findByIdAndUpdate(req.user.id, {
     vendorInfo: newVendorInfo
@@ -46,7 +67,8 @@ exports.applyVendor = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: 'Vendor application submitted successfully'
+    message: 'Vendor application submitted successfully',
+    isVerified: !!isValidTaxId 
   });
 });
 

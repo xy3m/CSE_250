@@ -43,45 +43,51 @@ const userSchema = new mongoose.Schema({
     maxLength: [15, 'Phone number cannot exceed 15 characters']
   },
   
- vendorInfo: {
-  businessName: {
-    type: String,
-    maxLength: [100, 'Business name cannot exceed 100 characters']
-  },
-  businessType: {
-    type: String
-  },
-  businessAddress: {
-    type: String,
-    maxLength: [500, 'Business address cannot exceed 500 characters']
-  },
-  taxId: {
-    type: String
-  },
-  phoneNumber: {
-    type: String,
-    maxLength: [15, 'Phone number cannot exceed 15 characters']
-  },
-  description: {
-    type: String,
-    maxLength: [1000, 'Description cannot exceed 1000 characters']
-  },
-  status: {
+  vendorInfo: {
+    businessName: {
       type: String,
-      enum: ['pending', 'approved', 'rejected'],
-      default: 'pending'
+      maxLength: [100, 'Business name cannot exceed 100 characters']
     },
-  isApproved: {
-    type: Boolean,
-    default: false
+    businessType: {
+      type: String
+    },
+    businessAddress: {
+      type: String,
+      maxLength: [500, 'Business address cannot exceed 500 characters']
+    },
+    taxId: {
+      type: String
+    },
+    // === NEW FIELD FOR VERIFICATION ===
+    taxIdVerified: {
+      type: Boolean,
+      default: false
+    },
+    // ==================================
+    phoneNumber: {
+      type: String,
+      maxLength: [15, 'Phone number cannot exceed 15 characters']
+    },
+    description: {
+      type: String,
+      maxLength: [1000, 'Description cannot exceed 1000 characters']
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending'
+      },
+    isApproved: {
+      type: Boolean,
+      default: false
+    },
+    applicationDate: {
+      type: Date
+    },
+    approvedDate: {
+      type: Date
+    }
   },
-  applicationDate: {
-    type: Date
-  },
-  approvedDate: {
-    type: Date
-  }
-},
 
   addresses: [{
     name: {

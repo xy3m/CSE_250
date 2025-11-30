@@ -197,10 +197,26 @@ export default function AdminDashboard() {
                           <strong className="text-gray-600">Phone:</strong>
                           <p>{app.vendorInfo.phoneNumber}</p>
                         </div>
+                        
+                        {/* === TAX ID SECTION === */}
                         <div>
                           <strong className="text-gray-600">Tax ID:</strong>
-                          <p>{app.vendorInfo.taxId}</p>
+                          <p className="flex items-center gap-2">
+                            {app.vendorInfo.taxId}
+                            
+                            {app.vendorInfo.taxIdVerified ? (
+                              <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded border border-green-200 font-bold flex items-center gap-1">
+                                <span>✓</span> Verified
+                              </span>
+                            ) : (
+                              <span className="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded border border-red-200 font-bold flex items-center gap-1">
+                                <span>⚠</span> Unverified
+                              </span>
+                            )}
+                          </p>
                         </div>
+                        {/* ====================== */}
+
                         <div className="col-span-2">
                           <strong className="text-gray-600">Address:</strong>
                           <p>{app.vendorInfo.businessAddress}</p>
@@ -211,16 +227,27 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     </div>
+                    
+                    {/* === ACTION BUTTONS === */}
                     <div className="flex flex-col gap-2 flex-shrink-0">
+                      
+                      {/* APPROVE BUTTON (Now disabled if unverified) */}
                       <button
                         onClick={() => handleApprove(app._id)}
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full"
+                        disabled={!app.vendorInfo.taxIdVerified}
+                        title={!app.vendorInfo.taxIdVerified ? "Cannot approve unverified Tax ID" : "Approve Application"}
+                        className={`px-4 py-2 rounded w-full font-medium transition-colors ${
+                          app.vendorInfo.taxIdVerified
+                            ? 'bg-green-500 text-white hover:bg-green-600'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
                       >
                         ✓ Approve
                       </button>
+
                       <button
                         onClick={() => handleReject(app._id)}
-                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full"
+                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full font-medium"
                       >
                         ✗ Reject
                       </button>
