@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from '../api/axios';
 import { toast } from 'react-hot-toast';
+import SubmitReviewModal from '../components/SubmitReviewModal';
 
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitModalOpen, setSubmitModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState({ id: null, name: '' });
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -34,7 +37,7 @@ export default function MyOrders() {
           {orders.map(order => (
             <div key={order._id} className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
               <div className="flex flex-col md:flex-row justify-between gap-4">
-                
+
                 {/* Left Side: Product Details */}
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-2">
@@ -42,27 +45,39 @@ export default function MyOrders() {
                       <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Order #{order._id}</p>
                       <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-700' :
-                      order.orderStatus === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${order.orderStatus === 'Delivered' ? 'bg-green-100 text-green-700' :
+                        order.orderStatus === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                          'bg-yellow-100 text-yellow-800'
+                      }`}>
                       {order.orderStatus}
                     </span>
                   </div>
 
                   <div className="mt-3 space-y-2">
                     {order.orderItems.map((item) => (
-                      <div key={item.product} className="flex items-center gap-3">
-                        <img 
-                          src={item.image} 
-                          alt={item.name} 
-                          className="w-12 h-12 object-cover rounded border"
-                        />
-                        <div>
-                          <p className="font-semibold text-gray-800">{item.name}</p>
-                          <p className="text-sm text-gray-500">Qty: {item.quantity} × ৳{item.price}</p>
+                      <div key={item.product} className="flex items-center justify-between gap-3 bg-slate-50 p-3 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-12 h-12 object-cover rounded border"
+                          />
+                          <div>
+                            <p className="font-semibold text-gray-800">{item.name}</p>
+                            <p className="text-sm text-gray-500">Qty: {item.quantity} × ৳{item.price}</p>
+                          </div>
                         </div>
+                        {order.orderStatus === 'Delivered' && (
+                          <button
+                            onClick={() => {
+                              setSelectedProduct({ id: item.product, name: item.name });
+                              setSubmitModalOpen(true);
+                            }}
+                            className="text-xs sm:text-sm font-medium text-teal-600 border border-teal-200 bg-white px-3 py-1.5 rounded-lg hover:bg-teal-50 hover:border-teal-300 transition-all"
+                          >
+                            Write Review
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -80,6 +95,12 @@ export default function MyOrders() {
           ))}
         </div>
       )}
+      <SubmitReviewModal
+        isOpen={submitModalOpen}
+        onClose={() => setSubmitModalOpen(false)}
+        productId={selectedProduct.id}
+        productName={selectedProduct.name}
+      />
     </div>
   );
 }

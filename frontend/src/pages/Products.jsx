@@ -4,20 +4,23 @@ import { useDispatch } from 'react-redux'
 import { addItemToCart } from '../redux/slices/cartSlice'
 import { toast } from 'react-hot-toast'
 import { useSearchParams, Link } from 'react-router-dom'
-import { FaSearch, FaArrowLeft } from 'react-icons/fa' // Changed FaTimes to FaArrowLeft
+import { FaSearch, FaArrowLeft, FaStar } from 'react-icons/fa' // Changed FaTimes to FaArrowLeft
+import ReviewModal from '../components/ReviewModal'
 
 export default function Products() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [reviewModalOpen, setReviewModalOpen] = useState(false)
+  const [selectedProductId, setSelectedProductId] = useState(null)
   const dispatch = useDispatch()
 
   const [searchParams] = useSearchParams()
-  const categoryQuery = searchParams.get('category') 
+  const categoryQuery = searchParams.get('category')
 
   useEffect(() => {
     fetchProducts()
-  }, [categoryQuery]) 
+  }, [categoryQuery])
 
   const fetchProducts = async () => {
     setLoading(true)
@@ -55,7 +58,7 @@ export default function Products() {
       <div className="bg-white border-b border-slate-200 sticky top-20 z-40 shadow-sm transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            
+
             {/* Title & Filter Info */}
             <div className="animate-fade-in-down">
               <h1 className="text-3xl font-bold text-slate-800 transition-colors duration-300 hover:text-teal-600 cursor-default">
@@ -65,14 +68,14 @@ export default function Products() {
                   </span>
                 ) : 'All Products'}
               </h1>
-              
+
               {/* === UPDATED: Back to Home Button === */}
               {categoryQuery && (
-                <Link 
-                  to="/dashboard" 
+                <Link
+                  to="/dashboard"
                   className="text-sm text-slate-500 hover:text-teal-600 flex items-center gap-2 mt-2 font-medium transition-all duration-300 group hover:-translate-x-1"
                 >
-                  <FaArrowLeft className="group-hover:-translate-x-1 transition-transform duration-300" /> 
+                  <FaArrowLeft className="group-hover:-translate-x-1 transition-transform duration-300" />
                   Back to Homepage
                 </Link>
               )}
@@ -116,12 +119,12 @@ export default function Products() {
           /* 3. The New Modern Grid */
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {filteredProducts.map((product, index) => (
-              <div 
-                key={product._id} 
+              <div
+                key={product._id}
                 className="modern-card group flex flex-col h-full overflow-hidden hover:-translate-y-2 hover:shadow-xl transition-all duration-500 ease-out"
                 style={{ animationDelay: `${index * 50}ms` }} // Staggered animation
               >
-                
+
                 {/* Image Container */}
                 <div className="relative h-64 overflow-hidden bg-gray-100">
                   <img
@@ -154,16 +157,41 @@ export default function Products() {
                   <h3 className="font-bold text-lg text-slate-800 mb-2 line-clamp-1 group-hover:text-teal-600 transition-colors duration-300">
                     {product.name}
                   </h3>
-                  
+
                   <p className="text-slate-500 text-sm mb-4 line-clamp-2 flex-grow group-hover:text-slate-600 transition-colors duration-300">
                     {product.description}
                   </p>
+
+                  <div className="flex items-center gap-1 mb-3">
+                    <div className="flex text-yellow-400">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <FaStar
+                          key={star}
+                          size={14}
+                          className={star <= (product.ratings || 0) ? "text-yellow-400" : "text-gray-300"}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-slate-400 ml-1">({product.numOfReviews} reviews)</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-4">
+                    <button
+                      onClick={() => {
+                        setSelectedProductId(product._id);
+                        setReviewModalOpen(true);
+                      }}
+                      className="text-xs font-medium text-teal-600 hover:text-teal-700 hover:underline"
+                    >
+                      View Reviews
+                    </button>
+                  </div>
 
                   <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 group-hover:border-teal-100 transition-colors duration-300">
                     <span className="text-xl font-bold text-slate-900 group-hover:text-teal-700 transition-colors duration-300">
                       ৳{product.price}
                     </span>
-                    <button 
+                    <button
                       onClick={() => handleAddToCart(product)}
                       disabled={product.stock === 0}
                       className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal-600 active:scale-95 transition-all duration-300 shadow-lg shadow-slate-900/20 hover:shadow-teal-600/30 disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed disabled:active:scale-100"
@@ -177,6 +205,11 @@ export default function Products() {
           </div>
         )}
       </div>
+      <ReviewModal
+        isOpen={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+        productId={selectedProductId}
+      />
     </div>
   )
 }

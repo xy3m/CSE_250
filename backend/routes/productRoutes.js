@@ -9,6 +9,8 @@ const {
   decreaseStockOnOrder,
   getVendorProducts, // <-- ADD THIS LINE
   getProductDetails, // <-- ADD THIS LINE
+  createProductReview,
+  getProductReviews,
 } = require('../controllers/productController')
 const { isAuthenticatedUser, authorizeRoles } = require('../middleware/auth')
 
@@ -18,6 +20,12 @@ router.route('/')
 router
   .route('/vendor')
   .get(isAuthenticatedUser, authorizeRoles('vendor', 'admin'), getVendorProducts)
+router.route('/review')
+  .put(isAuthenticatedUser, createProductReview)
+
+router.route('/reviews')
+  .get(getProductReviews)
+
 router.route('/:id')
   .get(getProductDetails) // <-- ADD THIS LINE
   .put(isAuthenticatedUser, authorizeRoles('vendor', 'admin'), updateProduct)
@@ -25,5 +33,7 @@ router.route('/:id')
 
 router.route('/:id/decrease-stock')
   .patch(isAuthenticatedUser, decreaseStockOnOrder)
+
+
 
 module.exports = router

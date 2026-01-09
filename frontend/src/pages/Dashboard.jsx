@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 // Ensure this file exists at src/api/axios.js
 import axios from '../api/axios'
-import { 
-  FaPlug, FaTshirt, FaUtensils, FaBook, FaBlender, FaTags
+import {
+  FaPlug, FaTshirt, FaUtensils, FaBook, FaBlender, FaTags, FaStar
 } from 'react-icons/fa'
+import ReviewModal from '../components/ReviewModal'
 import { useDispatch, useSelector } from 'react-redux'
 // Ensure this file exists at src/redux/slices/cartSlice.js
 import { addItemToCart } from '../redux/slices/cartSlice'
@@ -22,9 +23,11 @@ const categories = [
 export default function Dashboard() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [reviewModalOpen, setReviewModalOpen] = useState(false)
+  const [selectedProductId, setSelectedProductId] = useState(null)
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  
+
   // Get logged-in user to filter out their own products
   const { user } = useSelector((state) => state.auth)
 
@@ -71,14 +74,14 @@ export default function Dashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Categories Grid */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-slate-800 mb-6">Browse Categories</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {categories.map((cat) => (
-              <Link 
-                to={`/products?category=${cat.name}`} 
+              <Link
+                to={`/products?category=${cat.name}`}
                 key={cat.name}
                 className={`${cat.color} p-6 rounded-2xl flex flex-col items-center justify-center gap-3 hover:scale-105 transition-transform duration-300 shadow-sm border border-slate-100`}
               >
@@ -100,7 +103,7 @@ export default function Dashboard() {
 
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1,2,3,4].map(n => (
+              {[1, 2, 3, 4].map(n => (
                 <div key={n} className="h-80 bg-slate-200 rounded-2xl animate-pulse"></div>
               ))}
             </div>
@@ -108,11 +111,11 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {displayProducts.slice(0, 8).map((product) => (
                 <div key={product._id} className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 flex flex-col h-[400px]">
-                  
+
                   {/* Image Container */}
                   <div className="relative h-48 overflow-hidden bg-slate-100">
-                    <img 
-                      src={product.images?.[0]?.url || 'https://via.placeholder.com/300'} 
+                    <img
+                      src={product.images?.[0]?.url || 'https://via.placeholder.com/300'}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
@@ -140,12 +143,37 @@ export default function Dashboard() {
                     <h3 className="font-bold text-lg text-slate-800 mb-2 line-clamp-1 group-hover:text-teal-600 transition-colors duration-300">
                       {product.name}
                     </h3>
-                    
+
+                    <div className="flex items-center gap-1 mb-3">
+                      <div className="flex text-yellow-400">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <FaStar
+                            key={star}
+                            size={14}
+                            className={star <= (product.ratings || 0) ? "text-yellow-400" : "text-gray-300"}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-slate-400 ml-1">({product.numOfReviews} reviews)</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-4">
+                      <button
+                        onClick={() => {
+                          setSelectedProductId(product._id);
+                          setReviewModalOpen(true);
+                        }}
+                        className="text-xs font-medium text-teal-600 hover:text-teal-700 hover:underline"
+                      >
+                        View Reviews
+                      </button>
+                    </div>
+
                     <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 group-hover:border-teal-100 transition-colors duration-300">
                       <span className="text-xl font-bold text-slate-900 group-hover:text-teal-700 transition-colors duration-300">
                         ৳{product.price}
                       </span>
-                      <button 
+                      <button
                         onClick={() => handleAddToCart(product)}
                         disabled={product.stock === 0}
                         className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal-600 active:scale-95 transition-all duration-300 shadow-lg shadow-slate-900/20 hover:shadow-teal-600/30 disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed disabled:active:scale-100"
@@ -159,7 +187,12 @@ export default function Dashboard() {
             </div>
           )}
         </section>
-      </div>
-    </div>
+      </div >
+      <ReviewModal
+        isOpen={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+        productId={selectedProductId}
+      />
+    </div >
   )
 }
