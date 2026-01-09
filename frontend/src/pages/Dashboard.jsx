@@ -33,6 +33,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [reviewModalOpen, setReviewModalOpen] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState(null)
+  const [expandedDescriptions, setExpandedDescriptions] = useState({}) // New state for tracking expanded descriptions
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -98,6 +99,13 @@ export default function Dashboard() {
     dispatch(addItemToCart(product))
     toast.success('Added to Cart')
   }
+
+  const toggleDescription = (id) => {
+    setExpandedDescriptions(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
 
   // --- FILTERING LOGIC ---
   const displayProducts = products.filter(product => {
@@ -275,6 +283,24 @@ export default function Dashboard() {
                           ))}
                         </div>
                         <span className="text-xs text-slate-400 font-medium ml-1">({product.numOfReviews})</span>
+                      </div>
+
+                      {/* Description Section */}
+                      <div className="mb-4">
+                        <p className={`text-sm text-slate-500 leading-relaxed ${expandedDescriptions[product._id] ? '' : 'line-clamp-2'}`}>
+                          {product.description || "No description available."}
+                        </p>
+                        {product.description && product.description.split(/\s+/).length > 20 && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault(); // Prevent Link navigation if wrapped
+                              toggleDescription(product._id);
+                            }}
+                            className="text-xs font-bold text-teal-600 hover:text-teal-700 mt-1 focus:outline-none"
+                          >
+                            {expandedDescriptions[product._id] ? "Show Less" : "Read More"}
+                          </button>
+                        )}
                       </div>
 
                       <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100/50">

@@ -35,6 +35,20 @@ export default function AddProduct() {
   }
 
   const handleChange = e => {
+    if (e.target.name === 'description') {
+      const words = e.target.value.trim().split(/\s+/)
+      if (words.length > 50 && e.nativeEvent.inputType !== 'deleteContentBackward') {
+        // Allow deleting, but prevent adding more words if limit reached
+        // We only block if the user is trying to add more non-whitespace
+        // actually, simpler to just truncate or warn. Let's strictly enforce via slice if needed,
+        // but splitting by space on every keystroke can be glitchy for spaces.
+        // Better strategy: Count words, if > 50, strictly slice? No, just prevent state update if word count increases.
+        // actually, let's just let them type but show error/disable button, or slice. 
+        // User request: "fixed size limit".
+        const currentWords = e.target.value.split(/\s+/).filter(Boolean);
+        if (currentWords.length > 50) return; // Prevent typing more
+      }
+    }
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
@@ -157,16 +171,21 @@ export default function AddProduct() {
                 </motion.div>
 
                 <motion.div variants={itemVariants}>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-                  <textarea
-                    name="description"
-                    rows="4"
-                    className="w-full p-4 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400 resize-none"
-                    placeholder="Describe your product in detail..."
-                    value={form.description}
-                    onChange={handleChange}
-                    required
-                  />
+                  <div className="relative">
+                    <textarea
+                      name="description"
+                      rows="4"
+                      className="w-full p-4 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400 resize-none"
+                      placeholder="Describe your product in detail (Max 50 words)..."
+                      value={form.description}
+                      onChange={handleChange}
+                      required
+                    />
+                    <div className={`absolute bottom-3 right-3 text-xs font-bold ${form.description.trim().split(/\s+/).filter(Boolean).length >= 50 ? 'text-rose-500' : 'text-slate-400'
+                      }`}>
+                      {form.description.trim() ? form.description.trim().split(/\s+/).filter(Boolean).length : 0}/50 words
+                    </div>
+                  </div>
                 </motion.div>
 
                 <motion.div variants={itemVariants}>

@@ -135,7 +135,7 @@ export default function Cart() {
         {cartItems.length === 0 ? (
           <GlassCard className="py-20">
             <div className="flex flex-col items-center justify-center gap-4 text-center">
-              <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-2">
+              <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-400 mb-2">
                 <FaShoppingCart size={40} />
               </div>
               <h3 className="text-xl font-semibold text-slate-700">Your cart is empty</h3>
@@ -177,9 +177,9 @@ export default function Cart() {
                           <Link to={`/product/${item.product}`} className="text-lg font-bold text-slate-800 hover:text-teal-600 line-clamp-1 transition-colors">
                             {item.name}
                           </Link>
-                          <p className="text-slate-500 text-sm">Price: <span className="font-semibold text-slate-700">৳{item.price}</span></p>
+                          <p className="text-slate-500 text-sm">Price: <span className="font-bold text-amber-600 text-lg">৳{item.price}</span></p>
 
-                          <div className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-100 mt-1">
+                          <div className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100 mt-1">
                             <FaCheckCircle size={10} /> Stock: {item.stock}
                           </div>
                         </div>
@@ -224,9 +224,9 @@ export default function Cart() {
             < div className="space-y-6" >
 
               {/* Shipping Address */}
-              < GlassCard className="p-6" >
+              < GlassCard className="p-6 border-t-4 border-t-blue-500" >
                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
-                  <FaMapMarkerAlt className="text-rose-500" /> Shipping Address
+                  <FaMapMarkerAlt className="text-blue-500" /> Shipping Address
                 </h2>
                 {
                   user?.addresses?.length > 0 ? (
@@ -263,9 +263,9 @@ export default function Cart() {
 
               {/* Order Summary */}
               < div className="sticky top-24" >
-                <GlassCard className="p-6 border-t-4 border-t-teal-500">
+                <GlassCard className="p-6 border-t-4 border-t-emerald-500">
                   <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800">
-                    <FaCreditCard className="text-teal-500" /> Order Summary
+                    <FaCreditCard className="text-emerald-500" /> Order Summary
                   </h2>
 
                   <div className="space-y-4 text-sm text-slate-600">
@@ -286,7 +286,7 @@ export default function Cart() {
 
                     <div className="flex justify-between text-lg font-bold text-slate-800">
                       <span>Total</span>
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-blue-600">
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-extrabold text-2xl">
                         ৳{totalPrice.toFixed(2)}
                       </span>
                     </div>
@@ -295,7 +295,7 @@ export default function Cart() {
                   <GlowButton
                     onClick={handleCheckout}
                     disabled={cartItems.length === 0 || !selectedAddress}
-                    className="w-full mt-8 !py-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                    className="w-full mt-8 !py-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-emerald-600 hover:bg-emerald-500"
                   >
                     Proceed to Checkout
                   </GlowButton>

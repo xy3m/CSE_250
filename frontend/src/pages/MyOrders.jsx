@@ -33,8 +33,8 @@ export default function MyOrders() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Delivered': return 'bg-teal-100 text-teal-700 border-teal-200';
-      case 'Cancelled': return 'bg-rose-100 text-rose-700 border-rose-200';
+      case 'Delivered': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+      case 'Cancelled': return 'bg-red-100 text-red-700 border-red-200';
       case 'Processing': return 'bg-blue-100 text-blue-700 border-blue-200';
       default: return 'bg-amber-100 text-amber-700 border-amber-200';
     }
@@ -52,7 +52,7 @@ export default function MyOrders() {
     <PageTransition>
       <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="flex items-center gap-3 mb-8">
-          <div className="bg-gradient-to-br from-teal-500 to-blue-600 p-3 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-2xl shadow-lg">
             <FaShoppingBag className="text-white text-xl" />
           </div>
           <h1 className="text-3xl font-bold text-slate-800">My Orders</h1>
@@ -105,7 +105,7 @@ export default function MyOrders() {
                           {order.orderStatus}
                         </div>
                         <div className="flex items-center gap-2 text-slate-800 font-bold text-lg">
-                          <FaMoneyBillWave className="text-teal-500" /> ৳{order.totalPrice}
+                          <FaMoneyBillWave className="text-amber-500" /> <span className="text-amber-600">৳{order.totalPrice}</span>
                         </div>
                       </div>
                     </div>
@@ -124,7 +124,7 @@ export default function MyOrders() {
                             </div>
                             <div>
                               <p className="font-bold text-slate-800">{item.name}</p>
-                              <p className="text-sm text-slate-500 font-medium">Qty: {item.quantity} × <span className="text-slate-700">৳{item.price}</span></p>
+                              <p className="text-sm text-slate-500 font-medium">Qty: {item.quantity} × <span className="text-amber-600 font-bold">৳{item.price}</span></p>
                             </div>
                           </div>
 
@@ -134,7 +134,7 @@ export default function MyOrders() {
                                 setSelectedProduct({ id: item.product, name: item.name });
                                 setSubmitModalOpen(true);
                               }}
-                              className="flex items-center gap-2 text-sm font-semibold text-teal-600 border border-teal-200 bg-teal-50/50 px-4 py-2 rounded-lg hover:bg-teal-100/50 hover:border-teal-300 transition-all w-full sm:w-auto justify-center"
+                              className="flex items-center gap-2 text-sm font-semibold text-emerald-600 border border-emerald-200 bg-emerald-50/50 px-4 py-2 rounded-lg hover:bg-emerald-100/50 hover:border-emerald-300 transition-all w-full sm:w-auto justify-center"
                             >
                               <FaPen size={12} /> Write Review
                             </button>
