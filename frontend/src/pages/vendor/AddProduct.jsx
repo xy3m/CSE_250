@@ -84,8 +84,8 @@ export default function AddProduct() {
             <FaBoxOpen className="text-white text-xl" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">Add New Product</h1>
-            <p className="text-slate-500 text-sm">Create a new listing for your store</p>
+            <h1 className="text-3xl font-bold text-white">Add New Product</h1>
+            <p className="text-slate-300 text-sm">Create a new listing for your store</p>
           </div>
         </div>
 
@@ -106,7 +106,7 @@ export default function AddProduct() {
                     <input
                       name="name"
                       type="text"
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
+                      className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
                       placeholder="e.g. Premium Wireless Headphones"
                       value={form.name}
                       onChange={handleChange}
@@ -123,7 +123,7 @@ export default function AddProduct() {
                       <input
                         name="price"
                         type="number"
-                        className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
+                        className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
                         placeholder="0.00"
                         value={form.price}
                         onChange={handleChange}
@@ -138,7 +138,7 @@ export default function AddProduct() {
                       <input
                         name="stock"
                         type="number"
-                        className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
+                        className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
                         placeholder="Available Qty"
                         value={form.stock}
                         onChange={handleChange}
@@ -154,7 +154,7 @@ export default function AddProduct() {
                     <FaLayerGroup className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                     <select
                       name="category"
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 appearance-none cursor-pointer"
+                      className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 appearance-none cursor-pointer"
                       value={form.category}
                       onChange={handleChange}
                     >
@@ -175,7 +175,7 @@ export default function AddProduct() {
                     <textarea
                       name="description"
                       rows="4"
-                      className="w-full p-4 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400 resize-none"
+                      className="w-full p-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400 resize-none"
                       placeholder="Describe your product in detail (Max 50 words)..."
                       value={form.description}
                       onChange={handleChange}
@@ -220,7 +220,7 @@ export default function AddProduct() {
           {/* Right Column: Live Preview */}
           <div className="flex flex-col gap-6">
             <div>
-              <h3 className="text-lg font-bold text-slate-700 mb-4">Live Preview</h3>
+              <h3 className="text-lg font-bold text-white mb-4">Live Preview</h3>
               <GlassCard className="p-6 overflow-hidden group">
                 <div className="aspect-square w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative flex items-center justify-center mb-4">
                   {form.imageUrl ? (

@@ -115,7 +115,7 @@ export default function Dashboard() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-slate-50 overflow-hidden">
+      <div className="min-h-screen overflow-hidden">
 
         {/* 1. GSAP Animated Hero Section with Parallax & Gravity Effect */}
         <div
@@ -199,21 +199,21 @@ export default function Dashboard() {
 
           {/* Categories Grid */}
           <section id="categories" className="mb-12">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6">Browse Categories</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Browse Categories</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
               {categories.map((cat, index) => (
                 <GlassCard
                   key={cat.name}
-                  className="group p-6 flex flex-col items-center justify-center gap-4 cursor-pointer backdrop-blur-md bg-white/30 border-white/40 hover:bg-white/50"
+                  className="group p-6 flex flex-col items-center justify-center gap-4 cursor-pointer backdrop-blur-md bg-white/80 border-white/50 hover:bg-white/90 shadow-lg"
                 >
                   <Link to={`/products?category=${cat.name}`} className="flex flex-col items-center w-full">
                     <div
                       // whileHover={{ rotate: [0, -10, 10, 0] }} // Removed Framer Motion
-                      className={`text-4xl ${cat.color.replace('bg-', 'text-').split(' ')[0]} drop-shadow-md`}
+                      className={`text-4xl ${cat.color.replace('bg-', 'text-').split(' ')[0]} drop-shadow-sm`}
                     >
                       {cat.icon}
                     </div>
-                    <span className="font-semibold text-slate-700 mt-2">{cat.name}</span>
+                    <span className="font-semibold text-slate-800 mt-2 group-hover:text-teal-600 transition-colors">{cat.name}</span>
                   </Link>
                 </GlassCard>
               ))}
@@ -223,8 +223,8 @@ export default function Dashboard() {
           {/* Featured Products */}
           <section>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-slate-800">Featured Products</h2>
-              <Link to="/products" className="text-teal-600 font-medium hover:text-teal-700">
+              <h2 className="text-2xl font-bold text-white">Featured Products</h2>
+              <Link to="/products" className="text-teal-400 font-medium hover:text-teal-300">
                 View All →
               </Link>
             </div>
@@ -232,17 +232,17 @@ export default function Dashboard() {
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[1, 2, 3, 4].map(n => (
-                  <div key={n} className="h-80 bg-slate-200 rounded-2xl animate-pulse"></div>
+                  <div key={n} className="h-80 bg-slate-200/50 rounded-2xl animate-pulse"></div>
                 ))}
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {displayProducts.slice(0, 8).map((product, index) => (
-                  <GlassCard key={product._id} className="p-0 h-full flex flex-col group">
+                  <GlassCard key={product._id} className="p-0 h-full flex flex-col group bg-white/80 border-white/40 shadow-xl hover:shadow-2xl hover:bg-white/90 transition-all duration-300">
 
                     {/* Image Container with 3D feel */}
                     <div className="relative h-64 overflow-hidden rounded-t-2xl">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-60" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10 opacity-40" />
                       <img
                         src={product.images?.[0]?.url || 'https://via.placeholder.com/300'}
                         alt={product.name}
@@ -268,26 +268,26 @@ export default function Dashboard() {
                         {product.vendor?.name || 'Local Seller'}
                       </div>
 
-                      <h3 className="font-bold text-xl text-slate-800 mb-2 line-clamp-1 group-hover:text-teal-600 transition-colors">
+                      <h3 className="font-bold text-xl text-slate-900 mb-2 line-clamp-1 group-hover:text-teal-600 transition-colors">
                         {product.name}
                       </h3>
 
                       <div className="flex items-center gap-1 mb-4">
-                        <div className="flex text-yellow-400 drop-shadow-sm">
+                        <div className="flex text-yellow-500 drop-shadow-sm">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <FaStar
                               key={star}
                               size={14}
-                              className={star <= (product.ratings || 0) ? "fill-current" : "text-slate-200"}
+                              className={star <= (product.ratings || 0) ? "fill-current" : "text-slate-300"}
                             />
                           ))}
                         </div>
-                        <span className="text-xs text-slate-400 font-medium ml-1">({product.numOfReviews})</span>
+                        <span className="text-xs text-slate-500 font-medium ml-1">({product.numOfReviews})</span>
                       </div>
 
                       {/* Description Section */}
                       <div className="mb-4">
-                        <p className={`text-sm text-slate-500 leading-relaxed ${expandedDescriptions[product._id] ? '' : 'line-clamp-2'}`}>
+                        <p className={`text-sm text-slate-600 leading-relaxed ${expandedDescriptions[product._id] ? '' : 'line-clamp-2'}`}>
                           {product.description || "No description available."}
                         </p>
                         {product.description && product.description.split(/\s+/).length > 20 && (
@@ -296,14 +296,14 @@ export default function Dashboard() {
                               e.preventDefault(); // Prevent Link navigation if wrapped
                               toggleDescription(product._id);
                             }}
-                            className="text-xs font-bold text-teal-600 hover:text-teal-700 mt-1 focus:outline-none"
+                            className="text-xs font-bold text-teal-600 hover:text-teal-500 mt-1 focus:outline-none"
                           >
                             {expandedDescriptions[product._id] ? "Show Less" : "Read More"}
                           </button>
                         )}
                       </div>
 
-                      <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100/50">
+                      <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-200">
                         <span className="text-2xl font-bold text-slate-900">
                           ৳{product.price}
                         </span>
@@ -321,9 +321,9 @@ export default function Dashboard() {
                           <GlowButton
                             onClick={() => handleAddToCart(product)}
                             disabled={product.stock === 0}
-                            className="!py-2 !px-4 text-sm"
+                            className="!py-2 !px-4 text-sm bg-teal-600 hover:bg-teal-500"
                           >
-                            Add
+                            Buy
                           </GlowButton>
                         </div>
                       </div>

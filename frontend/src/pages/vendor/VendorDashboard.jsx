@@ -58,10 +58,10 @@ export default function VendorDashboard() {
     <PageTransition>
       <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="flex items-center gap-3 mb-8">
-          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-2xl shadow-lg shadow-indigo-500/20">
             <FaStore className="text-white text-xl" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-800">Vendor Dashboard</h1>
+          <h1 className="text-3xl font-bold text-white">Vendor Dashboard</h1>
         </div>
 
         <motion.div
@@ -71,7 +71,7 @@ export default function VendorDashboard() {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
         >
           <motion.div variants={item}>
-            <GlassCard className="p-6 border-l-4 border-l-teal-500">
+            <GlassCard className="p-6 border-l-4 border-l-teal-500 bg-white/80 border-white/40 shadow-xl hover:shadow-2xl transition-all">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Products</h3>
@@ -87,7 +87,7 @@ export default function VendorDashboard() {
           </motion.div>
 
           <motion.div variants={item}>
-            <GlassCard className="p-6 border-l-4 border-l-green-500">
+            <GlassCard className="p-6 border-l-4 border-l-green-500 bg-white/80 border-white/40 shadow-xl hover:shadow-2xl transition-all">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Sales</h3>
@@ -103,7 +103,7 @@ export default function VendorDashboard() {
           </motion.div>
 
           <motion.div variants={item}>
-            <GlassCard className="p-6 border-l-4 border-l-blue-500">
+            <GlassCard className="p-6 border-l-4 border-l-blue-500 bg-white/80 border-white/40 shadow-xl hover:shadow-2xl transition-all">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Orders</h3>
@@ -124,7 +124,7 @@ export default function VendorDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <GlassCard className="p-8">
+          <GlassCard className="p-8 bg-white/80 border-white/40 shadow-xl">
             <h2 className="text-xl font-bold mb-6 text-slate-800">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Link

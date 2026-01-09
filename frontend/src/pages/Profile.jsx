@@ -67,12 +67,12 @@ export default function Profile() {
     <PageTransition>
       <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="flex items-center gap-3 mb-8">
-          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-2xl shadow-lg shadow-indigo-500/20">
             <FaUser className="text-white text-xl" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">My Profile</h1>
-            <p className="text-slate-500 text-sm">Manage your personal information</p>
+            <h1 className="text-3xl font-bold text-white">My Profile</h1>
+            <p className="text-slate-300 text-sm">Manage your personal information</p>
           </div>
         </div>
 
@@ -88,7 +88,7 @@ export default function Profile() {
               variants={sectionVariants}
               transition={{ delay: 0.1 }}
             >
-              <GlassCard className="p-6 md:p-8 relative overflow-hidden">
+              <GlassCard className="p-6 md:p-8 relative overflow-hidden bg-white/80 border-white/40 shadow-xl">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
                 <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
                   <div className="w-24 h-24 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center text-4xl text-slate-500 shadow-inner border-4 border-white">
@@ -97,13 +97,13 @@ export default function Profile() {
                   <div className="space-y-2 flex-1">
                     <h2 className="text-2xl font-bold text-slate-800">{user?.name}</h2>
                     <div className="flex flex-wrap gap-4 text-sm text-slate-600">
-                      <div className="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full border border-slate-100">
+                      <div className="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full border border-slate-200">
                         <FaEnvelope className="text-indigo-500" /> {user?.email}
                       </div>
-                      <div className="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full border border-slate-100">
+                      <div className="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full border border-slate-200">
                         <FaIdCard className="text-pink-500" /> <span className="capitalize">{user?.role}</span>
                       </div>
-                      <div className="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full border border-slate-100">
+                      <div className="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full border border-slate-200">
                         <FaCalendarAlt className="text-teal-500" /> Joined {new Date(user?.createdAt).toLocaleDateString()}
                       </div>
                     </div>
@@ -119,12 +119,12 @@ export default function Profile() {
               variants={sectionVariants}
               transition={{ delay: 0.2 }}
             >
-              <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <FaMapMarkerAlt className="text-rose-500" /> Saved Addresses
               </h2>
 
               {user?.addresses?.length === 0 ? (
-                <GlassCard className="p-8 text-center">
+                <GlassCard className="p-8 text-center bg-white/80 border-white/40">
                   <p className="text-slate-500">No addresses saved yet. Add one to speed up checkout!</p>
                 </GlassCard>
               ) : (
@@ -138,7 +138,7 @@ export default function Profile() {
                         exit={{ opacity: 0, height: 0 }}
                         className="group"
                       >
-                        <GlassCard className="p-5 flex justify-between items-start group-hover:border-teal-200 transition-colors">
+                        <GlassCard className="p-5 flex justify-between items-start group-hover:border-teal-200 transition-colors bg-white/80 border-white/40 hover:bg-white/90 shadow-lg">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="font-bold text-slate-800 text-lg">{addr.name}</span>
@@ -174,7 +174,7 @@ export default function Profile() {
             transition={{ delay: 0.3 }}
           >
             <div className="sticky top-24">
-              <GlassCard className="p-6">
+              <GlassCard className="p-6 bg-white/80 border-white/40 shadow-xl">
                 <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
                   <FaPlus className="text-teal-500" /> Add New Address
                 </h2>
@@ -184,7 +184,7 @@ export default function Profile() {
                       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Receiver Name</label>
                       <input
                         type="text" name="name" value={address.name} onChange={handleChange} required
-                        className="w-full px-4 py-2 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm"
+                        className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                         placeholder="e.g. John Doe"
                       />
                     </div>
@@ -192,7 +192,7 @@ export default function Profile() {
                       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Phone</label>
                       <input
                         type="text" name="phone" value={address.phone} onChange={handleChange} required
-                        className="w-full px-4 py-2 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm"
+                        className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                         placeholder="+880..."
                       />
                     </div>
@@ -201,7 +201,7 @@ export default function Profile() {
                       <input
                         type="text" name="addressLine" value={address.addressLine} onChange={handleChange} required
                         placeholder="House, Road, Area"
-                        className="w-full px-4 py-2 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm"
+                        className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -209,14 +209,14 @@ export default function Profile() {
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">City</label>
                         <input
                           type="text" name="city" value={address.city} onChange={handleChange} required
-                          className="w-full px-4 py-2 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm"
+                          className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Postal Code</label>
                         <input
                           type="text" name="postalCode" value={address.postalCode} onChange={handleChange} required
-                          className="w-full px-4 py-2 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm"
+                          className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                         />
                       </div>
                     </div>
@@ -224,7 +224,7 @@ export default function Profile() {
                       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Division</label>
                       <input
                         type="text" name="division" value={address.division} onChange={handleChange} required
-                        className="w-full px-4 py-2 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm"
+                        className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                       />
                     </div>
                   </div>

@@ -82,15 +82,15 @@ export default function VendorOrders() {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-slate-800 mb-2">Manage Orders</h1>
-            <p className="text-slate-500">Track and manage your customer shipments</p>
+            <h1 className="text-4xl font-bold text-white mb-2">Manage Orders</h1>
+            <p className="text-slate-300">Track and manage your customer shipments</p>
           </div>
 
           <GlowButton
             onClick={handleClearHistory}
             disabled={orders.length === 0}
             style={{ background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)' }}
-            className={`flex items-center gap-2 !py-2.5 !px-5 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed`}
+            className={`flex items-center gap-2 !py-2.5 !px-5 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed text-white shadow-lg shadow-red-500/30`}
           >
             <FaTrashAlt size={16} />
             Clear Delivered History
@@ -98,12 +98,12 @@ export default function VendorOrders() {
         </div>
 
         {orders.length === 0 ? (
-          <GlassCard className="py-20">
+          <GlassCard className="py-20 bg-white/80 border-white/40">
             <div className="flex flex-col items-center justify-center gap-4 text-center">
               <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-2">
                 <FaBoxOpen size={40} />
               </div>
-              <h3 className="text-xl font-semibold text-slate-700">No active orders</h3>
+              <h3 className="text-xl font-semibold text-slate-800">No active orders</h3>
               <p className="text-slate-500 max-w-sm">When customers place orders for your products, they will appear here.</p>
             </div>
           </GlassCard>
@@ -118,7 +118,7 @@ export default function VendorOrders() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <GlassCard className="p-0 overflow-hidden group">
+                  <GlassCard className="p-0 overflow-hidden group bg-white/80 border-white/40 shadow-xl hover:shadow-2xl transition-all">
                     {/* Status Bar */}
                     <div className={`h-1.5 w-full bg-gradient-to-r ${order.orderStatus === 'Delivered' ? 'from-emerald-400 to-teal-500' :
                       order.orderStatus === 'Shipped' ? 'from-amber-400 to-orange-500' :
@@ -135,7 +135,7 @@ export default function VendorOrders() {
                               <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
                                 Order #{order._id.slice(-6)}
                               </h3>
-                              <span className="text-xs text-slate-400 font-mono uppercase tracking-widest">
+                              <span className="text-xs text-slate-500 font-mono uppercase tracking-widest">
                                 ID: {order._id}
                               </span>
                             </div>

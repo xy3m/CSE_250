@@ -62,8 +62,8 @@ export default function VendorProducts() {
               <FaCubes className="text-white text-xl" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-slate-800">My Products</h1>
-              <p className="text-slate-500 text-sm">Manage your inventory</p>
+              <h1 className="text-3xl font-bold text-white">My Products</h1>
+              <p className="text-slate-300 text-sm">Manage your inventory</p>
             </div>
           </div>
 

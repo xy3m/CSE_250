@@ -133,16 +133,16 @@ export default function VendorApplication() {
     <PageTransition>
       <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="flex items-center gap-3 mb-8">
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-3 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-3 rounded-2xl shadow-lg shadow-emerald-500/20">
             <FaStoreAlt className="text-white text-xl" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">Become a Vendor</h1>
-            <p className="text-slate-500 text-sm">Start your selling journey on HaatBazar</p>
+            <h1 className="text-3xl font-bold text-white">Become a Vendor</h1>
+            <p className="text-slate-300 text-sm">Start your selling journey on HaatBazar</p>
           </div>
         </div>
 
-        <GlassCard className="p-6 sm:p-10">
+        <GlassCard className="p-6 sm:p-10 bg-white/80 border-white/40 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div
               variants={containerVariants}
@@ -157,7 +157,7 @@ export default function VendorApplication() {
                   <div className="relative">
                     <FaStore className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
+                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-900 placeholder-slate-400"
                       type="text"
                       name="businessName"
                       placeholder="Your Shop Name"
@@ -174,7 +174,7 @@ export default function VendorApplication() {
                   <div className="relative">
                     <FaBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                     <select
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-800 appearance-none cursor-pointer"
+                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-900 appearance-none cursor-pointer"
                       name="businessType"
                       value={form.businessType}
                       onChange={handleChange}
@@ -197,7 +197,7 @@ export default function VendorApplication() {
                   <div className="relative">
                     <FaIdCard className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
+                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-900 placeholder-slate-400"
                       type="text"
                       name="taxId"
                       placeholder="13-digit BIN Number"
@@ -206,7 +206,7 @@ export default function VendorApplication() {
                       required
                     />
                   </div>
-                  <p className="text-xs text-slate-400 mt-1 ml-1">Must be exactly 13 digits</p>
+                  <p className="text-xs text-slate-500 mt-1 ml-1">Must be exactly 13 digits</p>
                 </motion.div>
 
                 {/* Contact Phone */}
@@ -215,7 +215,7 @@ export default function VendorApplication() {
                   <div className="relative">
                     <FaPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
+                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-900 placeholder-slate-400"
                       type="tel"
                       name="phoneNumber"
                       placeholder="+880 1XXX-XXXXXX"
@@ -233,7 +233,7 @@ export default function VendorApplication() {
                 <div className="relative">
                   <FaMapMarkerAlt className="absolute left-4 top-4 text-slate-400" />
                   <textarea
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400 resize-none"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-900 placeholder-slate-400 resize-none"
                     name="businessAddress"
                     placeholder="Full business address"
                     value={form.businessAddress}
@@ -250,7 +250,7 @@ export default function VendorApplication() {
                 <div className="relative">
                   <FaFileAlt className="absolute left-4 top-4 text-slate-400" />
                   <textarea
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400 resize-none"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all outline-none text-slate-900 placeholder-slate-400 resize-none"
                     name="description"
                     placeholder="Tell us about your business and what you plan to sell..."
                     value={form.description}
@@ -265,7 +265,7 @@ export default function VendorApplication() {
                 <GlowButton
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 text-lg bg-emerald-600 hover:bg-emerald-500 justify-center"
+                  className="w-full py-4 text-lg bg-emerald-600 hover:bg-emerald-500 justify-center text-white"
                 >
                   {loading ? 'Submitting Application...' : 'Submit Application'}
                 </GlowButton>

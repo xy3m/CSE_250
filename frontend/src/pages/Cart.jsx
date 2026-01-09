@@ -126,19 +126,19 @@ export default function Cart() {
     <PageTransition>
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="flex items-center gap-4 mb-8">
-          <h1 className="text-3xl font-bold text-slate-800">Shopping Cart</h1>
-          <span className="bg-slate-200 text-slate-600 px-3 py-1 rounded-full text-sm font-bold">
+          <h1 className="text-3xl font-bold text-white">Shopping Cart</h1>
+          <span className="bg-slate-200 text-slate-900 px-3 py-1 rounded-full text-sm font-bold">
             {cartItems.length} Items
           </span>
         </div>
 
         {cartItems.length === 0 ? (
-          <GlassCard className="py-20">
+          <GlassCard className="py-20 bg-white/80 border-white/40">
             <div className="flex flex-col items-center justify-center gap-4 text-center">
               <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-400 mb-2">
                 <FaShoppingCart size={40} />
               </div>
-              <h3 className="text-xl font-semibold text-slate-700">Your cart is empty</h3>
+              <h3 className="text-xl font-semibold text-slate-800">Your cart is empty</h3>
               <p className="text-slate-500 max-w-sm mb-4">You haven't added any items to your cart yet.</p>
               <Link to="/dashboard">
                 <GlowButton>Start Shopping</GlowButton>
@@ -159,7 +159,7 @@ export default function Cart() {
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <GlassCard className="p-4 flex flex-col md:flex-row gap-6 items-center group w-full">
+                    <GlassCard className="p-4 flex flex-col md:flex-row gap-6 items-center group w-full bg-white/80 border-white/40 shadow-lg hover:shadow-xl transition-all">
                       {/* Image */}
                       <div className="relative w-full md:w-32 h-48 md:h-32 shrink-0 overflow-hidden rounded-xl bg-slate-100 border border-slate-200">
                         <img
@@ -221,10 +221,10 @@ export default function Cart() {
             </div >
 
             {/* Right Column: Checkout Info */}
-            < div className="space-y-6" >
+            <div className="space-y-6">
 
               {/* Shipping Address */}
-              < GlassCard className="p-6 border-t-4 border-t-blue-500" >
+              <GlassCard className="p-6 border-t-4 border-t-blue-500 bg-white/80 border-white/40 shadow-xl">
                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
                   <FaMapMarkerAlt className="text-blue-500" /> Shipping Address
                 </h2>
@@ -259,11 +259,11 @@ export default function Cart() {
                     </div>
                   )
                 }
-              </GlassCard >
+              </GlassCard>
 
               {/* Order Summary */}
-              < div className="sticky top-24" >
-                <GlassCard className="p-6 border-t-4 border-t-emerald-500">
+              <div className="sticky top-24">
+                <GlassCard className="p-6 border-t-4 border-t-emerald-500 bg-white/80 border-white/40 shadow-xl">
                   <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800">
                     <FaCreditCard className="text-emerald-500" /> Order Summary
                   </h2>

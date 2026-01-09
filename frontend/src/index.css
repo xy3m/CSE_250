@@ -27,12 +27,25 @@
   }
 
   body {
-    @apply bg-slate-50 text-slate-800 antialiased overflow-x-hidden;
-    /* Deep, rich background with subtle noise */
+    @apply bg-slate-950 text-slate-100 antialiased overflow-x-hidden;
+    /* Deep Night Mode Gradient: Blue/Green/Black with Yellow tint */
     background-image:
-      radial-gradient(at 0% 0%, hsla(210, 100%, 96%, 1) 0, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(180, 100%, 96%, 1) 0, transparent 50%);
+      radial-gradient(at 0% 0%, hsla(220, 40%, 20%, 1) 0, transparent 70%),
+      radial-gradient(at 100% 0%, hsla(160, 40%, 20%, 1) 0, transparent 70%),
+      radial-gradient(at 50% 100%, hsla(45, 30%, 20%, 0.2) 0, transparent 60%);
     min-height: 100vh;
+  }
+
+  /* Global Input/Select Text Fix for Light Cards */
+  input,
+  textarea,
+  select {
+    @apply text-slate-900;
+  }
+
+  /* Ensure placeholder text is visible but distinct */
+  ::placeholder {
+    @apply text-slate-400;
   }
 }
 

@@ -58,7 +58,7 @@ export default function Products() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen">
         {/* 1. Header Section with Gradient */}
         <div className="glass sticky top-20 z-40 transition-all duration-300 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 py-6">
@@ -66,10 +66,10 @@ export default function Products() {
 
               {/* Title & Filter Info */}
               <div className="animate-fade-in-down">
-                <h1 className="text-3xl font-bold text-slate-800 transition-colors duration-300 hover:text-teal-600 cursor-default">
+                <h1 className="text-3xl font-bold text-white transition-colors duration-300 hover:text-teal-400 cursor-default">
                   {categoryQuery ? (
                     <span className="flex items-center gap-2">
-                      Category: <span className="text-teal-600">{categoryQuery}</span>
+                      Category: <span className="text-teal-400">{categoryQuery}</span>
                     </span>
                   ) : 'All Products'}
                 </h1>
@@ -78,7 +78,7 @@ export default function Products() {
                 {categoryQuery && (
                   <Link
                     to="/dashboard"
-                    className="text-sm text-slate-500 hover:text-teal-600 flex items-center gap-2 mt-2 font-medium transition-all duration-300 group hover:-translate-x-1"
+                    className="text-sm text-slate-400 hover:text-teal-400 flex items-center gap-2 mt-2 font-medium transition-all duration-300 group hover:-translate-x-1"
                   >
                     <FaArrowLeft className="group-hover:-translate-x-1 transition-transform duration-300" />
                     Back to Homepage
@@ -89,11 +89,11 @@ export default function Products() {
 
               {/* Modern Search Bar */}
               <div className="relative w-full md:w-96 group">
-                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-teal-500 transition-colors duration-300" />
+                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-hover:text-teal-500 transition-colors duration-300" />
                 <input
                   type="text"
                   placeholder="Search products..."
-                  className="w-full pl-11 pr-4 py-3 bg-slate-100 border-none rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all duration-300 text-slate-700 font-medium placeholder-slate-400 group-hover:bg-white group-hover:shadow-md"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-slate-800 transition-all duration-300 text-slate-200 font-medium placeholder-slate-500 group-hover:bg-slate-800 group-hover:shadow-md"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -110,11 +110,11 @@ export default function Products() {
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-20 animate-fade-in">
-              <div className="bg-white p-8 rounded-2xl shadow-sm inline-block border border-slate-100 hover:shadow-md transition-shadow duration-300">
-                <p className="text-2xl font-bold text-slate-700 mb-2">No products found</p>
-                <p className="text-slate-500">Try a different search or clear the category filter.</p>
+              <div className="bg-white/5 p-8 rounded-2xl shadow-sm inline-block border border-white/10 hover:shadow-md transition-shadow duration-300 backdrop-blur-md">
+                <p className="text-2xl font-bold text-slate-200 mb-2">No products found</p>
+                <p className="text-slate-400">Try a different search or clear the category filter.</p>
                 {categoryQuery && (
-                  <Link to="/products" className="mt-4 inline-block text-teal-600 font-medium hover:underline hover:text-teal-700 transition-colors duration-200">
+                  <Link to="/products" className="mt-4 inline-block text-teal-400 font-medium hover:underline hover:text-teal-300 transition-colors duration-200">
                     View All Products
                   </Link>
                 )}
@@ -126,7 +126,7 @@ export default function Products() {
               {filteredProducts.map((product, index) => (
                 <GlassCard
                   key={product._id}
-                  className="p-0 h-full flex flex-col group"
+                  className="p-0 h-full flex flex-col group bg-white/80 border-white/40 shadow-xl hover:shadow-2xl hover:bg-white/90"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.05 }}
@@ -134,7 +134,7 @@ export default function Products() {
 
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden rounded-t-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-60" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10 opacity-40" />
                     <img
                       src={product.images?.[0]?.url || 'https://via.placeholder.com/300'}
                       alt={product.name}
@@ -160,28 +160,28 @@ export default function Products() {
                       {product.vendor?.name || 'Local Seller'}
                     </div>
 
-                    <h3 className="font-bold text-xl text-slate-800 mb-2 line-clamp-1 group-hover:text-teal-600 transition-colors duration-300">
+                    <h3 className="font-bold text-xl text-slate-900 mb-2 line-clamp-1 group-hover:text-teal-600 transition-colors duration-300">
                       {product.name}
                     </h3>
 
-                    <p className="text-slate-500 text-sm mb-4 line-clamp-2 flex-grow group-hover:text-slate-600 transition-colors duration-300">
+                    <p className="text-slate-600 text-sm mb-4 line-clamp-2 flex-grow group-hover:text-slate-800 transition-colors duration-300">
                       {product.description}
                     </p>
 
                     <div className="flex items-center gap-1 mb-4">
-                      <div className="flex text-yellow-400 drop-shadow-sm">
+                      <div className="flex text-yellow-500 drop-shadow-sm">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <FaStar
                             key={star}
                             size={14}
-                            className={star <= (product.ratings || 0) ? "fill-current" : "text-slate-200"}
+                            className={star <= (product.ratings || 0) ? "fill-current" : "text-slate-300"}
                           />
                         ))}
                       </div>
-                      <span className="text-xs text-slate-400 font-medium ml-1">({product.numOfReviews})</span>
+                      <span className="text-xs text-slate-500 font-medium ml-1">({product.numOfReviews})</span>
                     </div>
 
-                    <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100/50">
+                    <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-200/60">
                       <span className="text-2xl font-bold text-slate-900">
                         ৳{product.price}
                       </span>
@@ -199,9 +199,9 @@ export default function Products() {
                         <GlowButton
                           onClick={() => handleAddToCart(product)}
                           disabled={product.stock === 0}
-                          className="!py-2 !px-4 text-sm"
+                          className="!py-2 !px-4 text-sm bg-teal-600 hover:bg-teal-500"
                         >
-                          Add
+                          Buy
                         </GlowButton>
                       </div>
                     </div>
