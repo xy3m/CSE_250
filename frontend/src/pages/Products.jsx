@@ -58,7 +58,7 @@ export default function Products() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen">
+      <div className="min-h-screen pt-24">
         {/* 1. Header Section with Gradient */}
         <div className="glass sticky top-20 z-40 transition-all duration-300 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 py-6">
