@@ -10,8 +10,10 @@ const sendToken = (user, statusCode, res) => {
       Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // HTTPS in production
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    // FORCE SECURE COOKIES FOR DEPLOYMENT
+    // (Render requires 'trust proxy' if behind a proxy, but usually this works)
+    secure: true,
+    sameSite: 'none'
   };
 
   res.status(statusCode).cookie('token', token, options).json({
