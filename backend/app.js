@@ -7,6 +7,9 @@ const cors = require('cors'); // ADD THIS LINE
 
 const app = express();
 
+// Trust proxy for Render/Heroku (Required for Secure cookies behind load balancer)
+app.set('trust proxy', 1);
+
 // CORS Middleware - MUST BE FIRST
 app.use(cors({
   origin: (origin, callback) => {

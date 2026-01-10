@@ -61,9 +61,10 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
                 setFormData(prev => ({ ...prev, password: '' })); // Clear password
             }
         } catch (err) {
-            console.error("Auth Error Full:", err); // Debug log
-            console.error("Auth Error Response:", err.response); // Debug log
-            toast.error(err.message || err.payload || 'Authentication failed');
+            console.error("Auth Error Full:", err);
+            // Handle Redux unwrap() string error vs Standard Error object
+            const errorMessage = typeof err === 'string' ? err : (err.message || 'Authentication failed');
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
