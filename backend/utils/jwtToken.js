@@ -11,7 +11,7 @@ const sendToken = (user, statusCode, res) => {
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // HTTPS in production
-    sameSite: 'strict'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   };
 
   res.status(statusCode).cookie('token', token, options).json({
