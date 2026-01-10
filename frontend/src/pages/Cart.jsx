@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaShoppingCart, FaTrashAlt, FaTruck, FaMoneyBillWave, FaMapMarkerAlt, FaCreditCard } from 'react-icons/fa';
+import { FaShoppingCart, FaTrashAlt, FaTruck, FaMoneyBillWave, FaMapMarkerAlt, FaCreditCard, FaCheckCircle } from 'react-icons/fa';
 import axios from '../api/axios';
 import {
   updateCartQuantity,
@@ -65,16 +65,14 @@ export default function Cart() {
 
   const handleRemove = (id) => {
     dispatch(removeItemFromCart(id));
-    toast.success('Item removed from cart');
+    toast.success('Item removed');
   };
 
   // Safe totals calculation
   const itemsPrice = cartItems.reduce((acc, item) => acc + (item.price * item.quantity || 0), 0);
 
   // === FIXED SHIPPING COST ===
-  // Always 100 Tk, regardless of cart value
   const shippingPrice = 100;
-
   const taxPrice = Number((0.05 * itemsPrice).toFixed(2));
   const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
@@ -110,8 +108,6 @@ export default function Cart() {
       toast.success('Order placed successfully!');
       navigate('/orders/me');
 
-      // Delay clearing cart to allow exit animation to complete with items visible
-      // preventing the "Flash of Empty Cart"
       setTimeout(() => {
         dispatch(clearCart());
       }, 1000);
@@ -124,202 +120,199 @@ export default function Cart() {
 
   return (
     <PageTransition>
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="flex items-center gap-4 mb-8">
-          <h1 className="text-3xl font-bold text-white">Shopping Cart</h1>
-          <span className="bg-slate-200 text-slate-900 px-3 py-1 rounded-full text-sm font-bold">
-            {cartItems.length} Items
-          </span>
-        </div>
+      <div className="min-h-screen pt-32 pb-20 px-6 sm:px-8 bg-black">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-4 mb-10">
+            <h1 className="text-3xl font-bold text-white tracking-tight">Shopping Bag</h1>
+            <span className="bg-[#1C1C1E] text-gray-400 px-3 py-1 rounded-full text-sm font-medium border border-white/10">
+              {cartItems.length} Items
+            </span>
+          </div>
 
-        {cartItems.length === 0 ? (
-          <GlassCard className="py-20 bg-white/80 border-white/40">
-            <div className="flex flex-col items-center justify-center gap-4 text-center">
-              <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-400 mb-2">
+          {cartItems.length === 0 ? (
+            <GlassCard className="py-24 bg-[#1C1C1E] border-white/10 flex flex-col items-center justify-center text-center">
+              <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center text-gray-600 mb-6 mx-auto">
                 <FaShoppingCart size={40} />
               </div>
-              <h3 className="text-xl font-semibold text-slate-800">Your cart is empty</h3>
-              <p className="text-slate-500 max-w-sm mb-4">You haven't added any items to your cart yet.</p>
+              <h3 className="text-2xl font-bold text-white mb-2">Your Bag is Empty</h3>
+              <p className="text-gray-500 max-w-sm mb-8 text-lg mx-auto">You haven't added any items to your bag yet.</p>
               <Link to="/dashboard">
-                <GlowButton>Start Shopping</GlowButton>
+                <GlowButton className="px-8" variant="primary">Start Shopping</GlowButton>
               </Link>
-            </div>
-          </GlassCard>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            </GlassCard>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            {/* Left Column: Cart Items */}
-            <div className="lg:col-span-2 space-y-4">
-              <AnimatePresence>
-                {cartItems.map((item, index) => (
-                  <motion.div
-                    key={item.product}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <GlassCard className="p-4 flex flex-col md:flex-row gap-6 items-center group w-full bg-white/80 border-white/40 shadow-lg hover:shadow-xl transition-all">
-                      {/* Image */}
-                      <div className="relative w-full md:w-32 h-48 md:h-32 shrink-0 overflow-hidden rounded-xl bg-slate-100 border border-slate-200">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                      </div>
+              {/* Left Column: Cart Items */}
+              <div className="lg:col-span-2 space-y-4">
+                <AnimatePresence>
+                  {cartItems.map((item, index) => (
+                    <motion.div
+                      key={item.product}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="group"
+                    >
+                      <GlassCard className="p-4 flex flex-col md:flex-row gap-6 items-center w-full !rounded-3xl relative overflow-hidden group-hover:border-blue-500/30 transition-colors">
 
-                      {/* Content Wrapper */}
-                      <div className="flex flex-1 w-full flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-                        {/* Text Info */}
-                        <div className="space-y-1 text-center md:text-left">
-                          <Link to={`/product/${item.product}`} className="text-lg font-bold text-slate-800 hover:text-teal-600 line-clamp-1 transition-colors">
-                            {item.name}
-                          </Link>
-                          <p className="text-slate-500 text-sm">Price: <span className="font-bold text-amber-600 text-lg">৳{item.price}</span></p>
-
-                          <div className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100 mt-1">
-                            <FaCheckCircle size={10} /> Stock: {item.stock}
-                          </div>
+                        {/* Image */}
+                        <div className="relative w-full md:w-32 h-48 md:h-32 shrink-0 overflow-hidden rounded-2xl bg-black border border-white/5">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                          />
                         </div>
 
-                        {/* Actions: Quantity & Remove */}
-                        <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto">
+                        {/* Content Wrapper */}
+                        <div className="flex flex-1 w-full flex-col md:flex-row md:items-center md:justify-between gap-6">
 
-                          <div className="flex items-center bg-white rounded-lg border border-slate-200 shadow-sm h-9">
+                          {/* Text Info */}
+                          <div className="space-y-1 text-center md:text-left flex-1">
+                            <Link to={`/products/${item.product}`} className="text-lg font-bold text-white hover:text-blue-400 line-clamp-1 transition-colors">
+                              {item.name}
+                            </Link>
+                            <div className="flex items-center justify-center md:justify-start gap-3 text-sm text-gray-500">
+                              <span>Unit Price:</span>
+                              <span className="font-medium text-gray-300">৳{item.price}</span>
+                            </div>
+
+                            <div className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 mt-2">
+                              <FaCheckCircle size={10} /> Stock: {item.stock}
+                            </div>
+                          </div>
+
+                          {/* Actions: Quantity & Remove */}
+                          <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto">
+
+                            <div className="flex items-center bg-black rounded-full border border-white/10 h-10">
+                              <button
+                                className="w-10 h-full text-gray-400 hover:text-white transition flex items-center justify-center text-xl pb-1"
+                                onClick={() => handleQuantityChange(item.product, item.quantity - 1)}
+                              >
+                                -
+                              </button>
+                              <span className="w-8 text-center font-bold text-white text-sm">{item.quantity}</span>
+                              <button
+                                className="w-10 h-full text-gray-400 hover:text-white transition flex items-center justify-center text-xl pb-1"
+                                onClick={() => handleQuantityChange(item.product, item.quantity + 1)}
+                              >
+                                +
+                              </button>
+                            </div>
+
                             <button
-                              className="px-3 h-full text-slate-500 hover:bg-slate-50 hover:text-slate-700 rounded-l-lg transition border-r border-slate-100 flex items-center justify-center"
-                              onClick={() => handleQuantityChange(item.product, item.quantity - 1)}
+                              onClick={() => handleRemove(item.product)}
+                              className="text-gray-500 hover:text-red-400 p-2 rounded-full hover:bg-white/5 transition-colors"
+                              title="Remove Item"
                             >
-                              -
-                            </button>
-                            <span className="w-10 text-center font-bold text-slate-800 text-sm">{item.quantity}</span>
-                            <button
-                              className="px-3 h-full text-slate-500 hover:bg-slate-50 hover:text-slate-700 rounded-r-lg transition border-l border-slate-100 flex items-center justify-center"
-                              onClick={() => handleQuantityChange(item.product, item.quantity + 1)}
-                            >
-                              +
+                              <FaTrashAlt size={16} />
                             </button>
                           </div>
 
-                          <button
-                            onClick={() => handleRemove(item.product)}
-                            className="text-rose-500 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 transition-colors flex items-center gap-1"
-                            title="Remove Item"
-                          >
-                            <FaTrashAlt size={14} /> <span className="md:hidden text-sm font-medium">Remove</span>
-                          </button>
                         </div>
-
-                      </div>
-                    </GlassCard>
-
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div >
-
-            {/* Right Column: Checkout Info */}
-            <div className="space-y-6">
-
-              {/* Shipping Address */}
-              <GlassCard className="p-6 border-t-4 border-t-blue-500 bg-white/80 border-white/40 shadow-xl">
-                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
-                  <FaMapMarkerAlt className="text-blue-500" /> Shipping Address
-                </h2>
-                {
-                  user?.addresses?.length > 0 ? (
-                    <div className="relative">
-                      <select
-                        className="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-3 px-4 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all cursor-pointer"
-                        onChange={handleSelectAddress}
-                        defaultValue=""
-                      >
-                        <option value="" disabled>Select delivery address</option>
-                        {user.addresses.map(addr => (
-                          <option key={addr._id} value={addr._id}>
-                            {addr.addressLine}, {addr.city}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-6 bg-amber-50 rounded-xl border border-amber-100 border-dashed">
-                      <p className="text-amber-800 mb-3 text-sm font-medium">No addresses saved</p>
-                      <Link
-                        to="/profile"
-                        className="text-teal-600 font-bold text-sm hover:underline"
-                      >
-                        + Add Address in Profile
-                      </Link>
-                    </div>
-                  )
-                }
-              </GlassCard>
-
-              {/* Order Summary */}
-              <div className="sticky top-24">
-                <GlassCard className="p-6 border-t-4 border-t-emerald-500 bg-white/80 border-white/40 shadow-xl">
-                  <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800">
-                    <FaCreditCard className="text-emerald-500" /> Order Summary
-                  </h2>
-
-                  <div className="space-y-4 text-sm text-slate-600">
-                    <div className="flex justify-between items-center">
-                      <span className="flex items-center gap-2"><FaBoxOpen className="text-slate-400" /> Subtotal</span>
-                      <span className="font-medium">৳{itemsPrice.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="flex items-center gap-2"><FaMoneyBillWave className="text-slate-400" /> Tax (5%)</span>
-                      <span className="font-medium">৳{taxPrice.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="flex items-center gap-2"><FaTruck className="text-slate-400" /> Shipping</span>
-                      <span className="font-bold text-teal-600">৳{shippingPrice.toFixed(2)}</span>
-                    </div>
-
-                    <div className="my-4 h-px bg-slate-200"></div>
-
-                    <div className="flex justify-between text-lg font-bold text-slate-800">
-                      <span>Total</span>
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-extrabold text-2xl">
-                        ৳{totalPrice.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <GlowButton
-                    onClick={handleCheckout}
-                    disabled={cartItems.length === 0 || !selectedAddress}
-                    className="w-full mt-8 !py-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-emerald-600 hover:bg-emerald-500"
-                  >
-                    Proceed to Checkout
-                  </GlowButton>
-                </GlassCard>
-
-                <p className="text-xs text-slate-400 text-center mt-4">
-                  Secure checkout powered by HaatBazar Pay
-                </p>
+                      </GlassCard>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div >
 
+              {/* Right Column: Checkout Info */}
+              <div className="space-y-6">
+
+                {/* Shipping Address */}
+                <GlassCard className="p-6 !rounded-3xl">
+                  <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-white">
+                    <FaMapMarkerAlt className="text-blue-500" /> Shipping Address
+                  </h2>
+                  {
+                    user?.addresses?.length > 0 ? (
+                      <div className="relative">
+                        <select
+                          className="w-full appearance-none bg-black border border-white/10 text-gray-200 py-3 px-4 pr-8 rounded-xl focus:outline-none focus:border-blue-500 transition-all cursor-pointer"
+                          onChange={handleSelectAddress}
+                          defaultValue=""
+                        >
+                          <option value="" disabled>Select delivery address</option>
+                          {user.addresses.map(addr => (
+                            <option key={addr._id} value={addr._id}>
+                              {addr.addressLine}, {addr.city}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                          <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-6 bg-white/5 rounded-xl border border-white/5 border-dashed">
+                        <p className="text-gray-500 mb-3 text-sm font-medium">No addresses saved</p>
+                        <Link
+                          to="/profile"
+                          className="text-blue-400 font-bold text-sm hover:underline"
+                        >
+                          + Add Address in Profile
+                        </Link>
+                      </div>
+                    )
+                  }
+                </GlassCard>
+
+                {/* Order Summary */}
+                <div className="sticky top-28">
+                  <GlassCard className="p-8 !rounded-3xl shadow-2xl">
+                    <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
+                      <FaCreditCard className="text-green-500" /> Order Summary
+                    </h2>
+
+                    <div className="space-y-4 text-sm text-gray-400">
+                      <div className="flex justify-between items-center">
+                        <span className="flex items-center gap-2">Subtotal</span>
+                        <span className="font-medium text-white">৳{itemsPrice.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="flex items-center gap-2">Tax (5%)</span>
+                        <span className="font-medium text-white">৳{taxPrice.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="flex items-center gap-2">Shipping</span>
+                        <span className="font-bold text-green-400">৳{shippingPrice.toFixed(2)}</span>
+                      </div>
+
+                      <div className="my-4 h-px bg-white/10"></div>
+
+                      <div className="flex justify-between text-lg font-bold text-white items-center">
+                        <span>Total</span>
+                        <span className="text-2xl">
+                          ৳{totalPrice.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <GlowButton
+                      onClick={handleCheckout}
+                      disabled={cartItems.length === 0 || !selectedAddress}
+                      className="w-full mt-8 !py-4 rounded-xl !text-base"
+                      variant="primary"
+                    >
+                      Pay with HaatBazar
+                    </GlowButton>
+                  </GlassCard>
+
+                  <p className="text-xs text-gray-600 text-center mt-6 flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500/50"></span>
+                    Secure SSL Encypted Checkout
+                  </p>
+                </div >
+
+              </div >
             </div >
-          </div >
-        )
-        }
+          )
+          }
+        </div >
       </div >
     </PageTransition >
   );
-}
-
-// Simple Icon Component (local helper since it imports FaCheckCircle above but used it inline)
-function FaBoxOpen({ className }) {
-  return <FaShoppingCart className={className} />;
-}
-function FaCheckCircle({ size }) {
-  // Re-using FontAwesome CheckCircle if needed or just simple check
-  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
 }

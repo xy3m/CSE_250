@@ -13,6 +13,7 @@ import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Products from './pages/Products.jsx'
+import ProductDetails from './pages/ProductDetails.jsx' // [NEW]
 import Cart from './pages/Cart.jsx'
 import MyOrders from './pages/MyOrders.jsx'
 
@@ -43,6 +44,7 @@ function AnimatedRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetails />} /> {/* [NEW] */}
         <Route path="/vendor/dashboard" element={<VendorDashboard />} />
         <Route path="/vendor/products/new" element={<AddProduct />} />
         <Route path="/vendor/products" element={<VendorProducts />} />

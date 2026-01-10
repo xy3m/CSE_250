@@ -46,8 +46,8 @@ export default function VendorProducts() {
   if (loading) {
     return (
       <PageTransition>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+        <div className="flex items-center justify-center min-h-[60vh] bg-black">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white"></div>
         </div>
       </PageTransition>
     )
@@ -55,86 +55,88 @@ export default function VendorProducts() {
 
   return (
     <PageTransition>
-      <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-2xl shadow-lg">
-              <FaCubes className="text-white text-xl" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-white">My Products</h1>
-              <p className="text-slate-300 text-sm">Manage your inventory</p>
-            </div>
-          </div>
-
-          <Link to="/vendor/products/new">
-            <GlowButton className="flex items-center gap-2">
-              <FaPlus /> Add New Product
-            </GlowButton>
-          </Link>
-        </div>
-
-        {products.length === 0 ? (
-          <GlassCard className="py-20">
-            <div className="flex flex-col items-center justify-center gap-4 text-center">
-              <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-2">
-                <FaBoxOpen size={40} />
+      <div className="min-h-screen pt-32 pb-20 px-6 sm:px-8 bg-black">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+            <div className="flex items-center gap-4">
+              <div className="bg-white/10 p-4 rounded-full border border-white/10">
+                <FaCubes className="text-white text-xl" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-700">No products found</h3>
-              <p className="text-slate-500 max-w-sm mb-4">You haven't added any products to your store yet.</p>
-              <Link to="/vendor/products/new">
-                <GlowButton>Create First Product</GlowButton>
-              </Link>
+              <div>
+                <h1 className="text-3xl font-bold text-white tracking-tight">My Products</h1>
+                <p className="text-gray-400 text-sm">Manage your inventory</p>
+              </div>
             </div>
-          </GlassCard>
-        ) : (
-          <div className="grid gap-6">
-            <AnimatePresence>
-              {products.map((product, index) => (
-                <motion.div
-                  key={product._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <GlassCard className="p-4 sm:p-6 flex flex-col sm:flex-row gap-6 items-center group">
-                    <div className="relative w-full sm:w-24 h-24 bg-slate-100 rounded-xl overflow-hidden shrink-0 border border-slate-200">
-                      <img
-                        src={product.images?.[0]?.url || 'https://via.placeholder.com/100'}
-                        alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </div>
 
-                    <div className="flex-grow w-full text-center sm:text-left">
-                      <h2 className="text-xl font-bold text-slate-800 mb-1">{product.name}</h2>
-                      <div className="flex items-center justify-center sm:justify-start gap-4 text-sm text-slate-500">
-                        <span className="bg-slate-100 px-2 py-1 rounded text-slate-600 font-medium">Stock: {product.stock}</span>
-                        <span className="font-bold text-slate-700">৳{product.price}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3 w-full sm:w-auto">
-                      <Link
-                        to={`/vendor/products/edit/${product._id}`}
-                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors font-medium"
-                      >
-                        <FaPen size={12} /> Edit
-                      </Link>
-                      <button
-                        onClick={() => deleteProduct(product._id)}
-                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-rose-50 text-rose-600 px-4 py-2 rounded-lg hover:bg-rose-100 border border-rose-200 transition-colors font-medium"
-                      >
-                        <FaTrashAlt size={12} /> Delete
-                      </button>
-                    </div>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            <Link to="/vendor/products/new">
+              <GlowButton className="flex items-center gap-2" variant="primary">
+                <FaPlus /> Add New Product
+              </GlowButton>
+            </Link>
           </div>
-        )}
+
+          {products.length === 0 ? (
+            <GlassCard className="py-20 bg-[#1C1C1E] border-white/10">
+              <div className="flex flex-col items-center justify-center gap-4 text-center">
+                <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center text-gray-500 mb-2">
+                  <FaBoxOpen size={40} />
+                </div>
+                <h3 className="text-xl font-semibold text-white">No products found</h3>
+                <p className="text-gray-500 max-w-sm mb-4">You haven't added any products to your store yet.</p>
+                <Link to="/vendor/products/new">
+                  <GlowButton variant="primary">Create First Product</GlowButton>
+                </Link>
+              </div>
+            </GlassCard>
+          ) : (
+            <div className="grid gap-6">
+              <AnimatePresence>
+                {products.map((product, index) => (
+                  <motion.div
+                    key={product._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <GlassCard className="p-4 sm:p-6 flex flex-col sm:flex-row gap-6 items-center group bg-[#1C1C1E] border-white/10 hover:border-blue-500/50 shadow-xl transition-all">
+                      <div className="relative w-full sm:w-24 h-24 bg-black rounded-xl overflow-hidden shrink-0 border border-white/10">
+                        <img
+                          src={product.images?.[0]?.url || 'https://via.placeholder.com/100'}
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+                        />
+                      </div>
+
+                      <div className="flex-grow w-full text-center sm:text-left">
+                        <h2 className="text-xl font-bold text-white mb-2">{product.name}</h2>
+                        <div className="flex items-center justify-center sm:justify-start gap-4 text-sm text-gray-400">
+                          <span className="bg-white/5 px-2 py-1 rounded border border-white/10 font-medium">Stock: {product.stock}</span>
+                          <span className="font-bold text-white">৳{product.price}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 w-full sm:w-auto">
+                        <Link
+                          to={`/vendor/products/edit/${product._id}`}
+                          className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-blue-500/10 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-500/20 border border-blue-500/20 transition-colors font-medium"
+                        >
+                          <FaPen size={12} /> Edit
+                        </Link>
+                        <button
+                          onClick={() => deleteProduct(product._id)}
+                          className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-red-500/10 text-red-400 px-4 py-2 rounded-lg hover:bg-red-500/20 border border-red-500/20 transition-colors font-medium"
+                        >
+                          <FaTrashAlt size={12} /> Delete
+                        </button>
+                      </div>
+                    </GlassCard>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+        </div>
       </div>
     </PageTransition>
   )

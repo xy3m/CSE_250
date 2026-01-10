@@ -38,13 +38,6 @@ export default function AddProduct() {
     if (e.target.name === 'description') {
       const words = e.target.value.trim().split(/\s+/)
       if (words.length > 50 && e.nativeEvent.inputType !== 'deleteContentBackward') {
-        // Allow deleting, but prevent adding more words if limit reached
-        // We only block if the user is trying to add more non-whitespace
-        // actually, simpler to just truncate or warn. Let's strictly enforce via slice if needed,
-        // but splitting by space on every keystroke can be glitchy for spaces.
-        // Better strategy: Count words, if > 50, strictly slice? No, just prevent state update if word count increases.
-        // actually, let's just let them type but show error/disable button, or slice. 
-        // User request: "fixed size limit".
         const currentWords = e.target.value.split(/\s+/).filter(Boolean);
         if (currentWords.length > 50) return; // Prevent typing more
       }
@@ -78,187 +71,190 @@ export default function AddProduct() {
 
   return (
     <PageTransition>
-      <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="bg-gradient-to-br from-teal-500 to-green-600 p-3 rounded-2xl shadow-lg">
-            <FaBoxOpen className="text-white text-xl" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-white">Add New Product</h1>
-            <p className="text-slate-300 text-sm">Create a new listing for your store</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column: Form */}
-          <GlassCard className="p-6 sm:p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-                className="space-y-5"
-              >
-                <motion.div variants={itemVariants}>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Product Name</label>
-                  <div className="relative">
-                    <FaTag className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      name="name"
-                      type="text"
-                      className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
-                      placeholder="e.g. Premium Wireless Headphones"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </motion.div>
-
-                <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Price (৳)</label>
-                    <div className="relative">
-                      <FaDollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                      <input
-                        name="price"
-                        type="number"
-                        className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
-                        placeholder="0.00"
-                        value={form.price}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Stock</label>
-                    <div className="relative">
-                      <FaWarehouse className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                      <input
-                        name="stock"
-                        type="number"
-                        className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
-                        placeholder="Available Qty"
-                        value={form.stock}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
-                  <div className="relative">
-                    <FaLayerGroup className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <select
-                      name="category"
-                      className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 appearance-none cursor-pointer"
-                      value={form.category}
-                      onChange={handleChange}
-                    >
-                      <option>Electronics</option>
-                      <option>Clothing</option>
-                      <option>Footwear</option>
-                      <option>Food & Beverages</option>
-                      <option>Books</option>
-                      <option>Beauty & Personal Care</option>
-                      <option>Home & Kitchen</option>
-                      <option>Others</option>
-                    </select>
-                  </div>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <div className="relative">
-                    <textarea
-                      name="description"
-                      rows="4"
-                      className="w-full p-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400 resize-none"
-                      placeholder="Describe your product in detail (Max 50 words)..."
-                      value={form.description}
-                      onChange={handleChange}
-                      required
-                    />
-                    <div className={`absolute bottom-3 right-3 text-xs font-bold ${form.description.trim().split(/\s+/).filter(Boolean).length >= 50 ? 'text-rose-500' : 'text-slate-400'
-                      }`}>
-                      {form.description.trim() ? form.description.trim().split(/\s+/).filter(Boolean).length : 0}/50 words
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Image URL</label>
-                  <div className="relative">
-                    <FaImage className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      name="imageUrl"
-                      type="url"
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none text-slate-800 placeholder-slate-400"
-                      placeholder="https://example.com/image.jpg"
-                      value={form.imageUrl}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </motion.div>
-
-                <motion.div variants={itemVariants} className="pt-4">
-                  <GlowButton
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-4 text-lg"
-                  >
-                    {loading ? 'Creating Product...' : 'Create Product'}
-                  </GlowButton>
-                </motion.div>
-              </motion.div>
-            </form>
-          </GlassCard>
-
-          {/* Right Column: Live Preview */}
-          <div className="flex flex-col gap-6">
+      <div className="min-h-screen pt-32 pb-20 px-6 sm:px-8 bg-black">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="bg-white/10 p-4 rounded-full border border-white/10">
+              <FaBoxOpen className="text-white text-xl" />
+            </div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-4">Live Preview</h3>
-              <GlassCard className="p-6 overflow-hidden group">
-                <div className="aspect-square w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative flex items-center justify-center mb-4">
-                  {form.imageUrl ? (
-                    <img
-                      src={form.imageUrl}
-                      alt="Preview"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'https://via.placeholder.com/400x400?text=Invalid+Image+URL'
-                      }}
-                    />
-                  ) : (
-                    <div className="text-center text-slate-400">
-                      <FaImage size={48} className="mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">Image preview will appear here</p>
-                    </div>
-                  )}
+              <h1 className="text-3xl font-bold text-white tracking-tight">Add New Product</h1>
+              <p className="text-gray-400 text-sm">Create a new listing for your store</p>
+            </div>
+          </div>
 
-                  {/* Stock Badge Preview */}
-                  {form.stock && (
-                    <div className="absolute top-4 right-4 bg-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                      In Stock: {form.stock}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column: Form */}
+            <GlassCard className="p-6 sm:p-8 bg-[#1C1C1E] border-white/10">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="show"
+                  className="space-y-5"
+                >
+                  <motion.div variants={itemVariants}>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Product Name</label>
+                    <div className="relative">
+                      <FaTag className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                      <input
+                        name="name"
+                        type="text"
+                        className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-white placeholder-gray-600"
+                        placeholder="e.g. Premium Wireless Headphones"
+                        value={form.name}
+                        onChange={handleChange}
+                        required
+                      />
                     </div>
-                  )}
-                </div>
+                  </motion.div>
 
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold text-slate-800 line-clamp-1">{form.name || 'Product Name'}</h2>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 text-sm bg-slate-100 px-2 py-1 rounded">{form.category}</span>
-                    <span className="text-xl font-bold text-teal-600">৳{form.price || '0.00'}</span>
+                  <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">Price (৳)</label>
+                      <div className="relative">
+                        <FaDollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                        <input
+                          name="price"
+                          type="number"
+                          className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-white placeholder-gray-600"
+                          placeholder="0.00"
+                          value={form.price}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">Stock</label>
+                      <div className="relative">
+                        <FaWarehouse className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                        <input
+                          name="stock"
+                          type="number"
+                          className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-white placeholder-gray-600"
+                          placeholder="Available Qty"
+                          value={form.stock}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants}>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Category</label>
+                    <div className="relative">
+                      <FaLayerGroup className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                      <select
+                        name="category"
+                        className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-white appearance-none cursor-pointer"
+                        value={form.category}
+                        onChange={handleChange}
+                      >
+                        <option>Electronics</option>
+                        <option>Clothing</option>
+                        <option>Footwear</option>
+                        <option>Food & Beverages</option>
+                        <option>Books</option>
+                        <option>Beauty & Personal Care</option>
+                        <option>Home & Kitchen</option>
+                        <option>Others</option>
+                      </select>
+                    </div>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants}>
+                    <div className="relative">
+                      <textarea
+                        name="description"
+                        rows="4"
+                        className="w-full p-4 bg-black border border-white/10 rounded-xl focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-white placeholder-gray-600 resize-none"
+                        placeholder="Describe your product in detail (Max 50 words)..."
+                        value={form.description}
+                        onChange={handleChange}
+                        required
+                      />
+                      <div className={`absolute bottom-3 right-3 text-xs font-bold ${form.description.trim().split(/\s+/).filter(Boolean).length >= 50 ? 'text-red-500' : 'text-gray-500'
+                        }`}>
+                        {form.description.trim() ? form.description.trim().split(/\s+/).filter(Boolean).length : 0}/50 words
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants}>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Image URL</label>
+                    <div className="relative">
+                      <FaImage className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                      <input
+                        name="imageUrl"
+                        type="url"
+                        className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-white placeholder-gray-600"
+                        placeholder="https://example.com/image.jpg"
+                        value={form.imageUrl}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants} className="pt-4">
+                    <GlowButton
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-3 text-lg"
+                      variant="primary"
+                    >
+                      {loading ? 'Creating Product...' : 'Create Product'}
+                    </GlowButton>
+                  </motion.div>
+                </motion.div>
+              </form>
+            </GlassCard>
+
+            {/* Right Column: Live Preview */}
+            <div className="flex flex-col gap-6">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-4">Live Preview</h3>
+                <GlassCard className="p-6 overflow-hidden group bg-[#1C1C1E] border-white/10">
+                  <div className="aspect-square w-full bg-black rounded-xl overflow-hidden border border-white/10 relative flex items-center justify-center mb-4">
+                    {form.imageUrl ? (
+                      <img
+                        src={form.imageUrl}
+                        alt="Preview"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://via.placeholder.com/400x400?text=Invalid+Image+URL'
+                        }}
+                      />
+                    ) : (
+                      <div className="text-center text-gray-500">
+                        <FaImage size={48} className="mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">Image preview will appear here</p>
+                      </div>
+                    )}
+
+                    {/* Stock Badge Preview */}
+                    {form.stock && (
+                      <div className="absolute top-4 right-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                        In Stock: {form.stock}
+                      </div>
+                    )}
                   </div>
-                  <p className="text-slate-500 text-sm line-clamp-3 mt-2">
-                    {form.description || 'Product description will appear here...'}
-                  </p>
-                </div>
-              </GlassCard>
+
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-bold text-white line-clamp-1">{form.name || 'Product Name'}</h2>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400 text-sm bg-white/5 px-2 py-1 rounded border border-white/5">{form.category}</span>
+                      <span className="text-xl font-bold text-white">৳{form.price || '0.00'}</span>
+                    </div>
+                    <p className="text-gray-500 text-sm line-clamp-3 mt-2">
+                      {form.description || 'Product description will appear here...'}
+                    </p>
+                  </div>
+                </GlassCard>
+              </div>
             </div>
           </div>
         </div>

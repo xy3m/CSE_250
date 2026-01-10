@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBoxOpen, FaCalendarAlt, FaMoneyBillWave, FaShoppingBag, FaPen } from 'react-icons/fa';
 import SubmitReviewModal from '../components/SubmitReviewModal';
 import GlassCard from '../components/ui/GlassCard';
+import GlowButton from '../components/ui/GlowButton';
 import PageTransition from '../components/ui/PageTransition';
 
 export default function MyOrders() {
@@ -15,7 +17,6 @@ export default function MyOrders() {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      // Enforce a minimum loading time to prevent "flash of empty content"
       const minLoadTime = new Promise(resolve => setTimeout(resolve, 800));
       const request = axios.get('/orders/me');
 
@@ -23,7 +24,7 @@ export default function MyOrders() {
         const [_, { data }] = await Promise.all([minLoadTime, request]);
         setOrders(data.orders);
       } catch (err) {
-        // toast.error('Could not fetch orders'); // Suppress error on 404/empty if specific code used
+        // Silent fail
       } finally {
         setLoading(false);
       }
@@ -33,127 +34,135 @@ export default function MyOrders() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Delivered': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      case 'Cancelled': return 'bg-red-100 text-red-700 border-red-200';
-      case 'Processing': return 'bg-blue-100 text-blue-700 border-blue-200';
-      default: return 'bg-amber-100 text-amber-700 border-amber-200';
+      case 'Delivered': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+      case 'Cancelled': return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+      case 'Processing': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+      default: return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
     }
   };
 
   if (loading) return (
     <PageTransition>
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+      <div className="flex items-center justify-center min-h-[60vh] bg-black text-white">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white"></div>
       </div>
     </PageTransition>
   );
 
   return (
     <PageTransition>
-      <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-2xl shadow-lg shadow-blue-500/20">
-            <FaShoppingBag className="text-white text-xl" />
+      <div className="min-h-screen pt-32 pb-20 px-6 sm:px-8 bg-black">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-4 mb-10">
+            <h1 className="text-3xl font-bold text-white tracking-tight">My Orders</h1>
+            <span className="bg-[#1C1C1E] text-gray-400 px-3 py-1 rounded-full text-sm font-medium border border-white/10">
+              {orders.length} Orders
+            </span>
           </div>
-          <h1 className="text-3xl font-bold text-white">My Orders</h1>
-        </div>
 
-        {orders.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <GlassCard className="py-16 bg-white/80 border-white/40">
-              <div className="flex flex-col items-center justify-center gap-4 text-center">
-                <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-2">
+          {orders.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <GlassCard className="py-24 bg-[#1C1C1E] border-white/10 flex flex-col items-center justify-center text-center !rounded-3xl">
+                <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center text-gray-600 mb-6 mx-auto">
                   <FaBoxOpen size={40} />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-800">No orders found</h3>
-                <p className="text-slate-500">You haven't placed any orders yet.</p>
-              </div>
-            </GlassCard>
-          </motion.div>
-        ) : (
-          <div className="space-y-6">
-            <AnimatePresence>
-              {orders.map((order, index) => (
-                <motion.div
-                  key={order._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <GlassCard className="p-6 group relative overflow-hidden bg-white/80 border-white/40 shadow-xl hover:shadow-2xl transition-all">
-                    {/* Detailed Header */}
-                    <div className="flex flex-col md:flex-row justify-between gap-4 border-b border-slate-200/60 pb-4 mb-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Order ID</span>
-                          <span className="text-sm font-mono text-slate-600">#{order._id}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-500 text-sm">
-                          <FaCalendarAlt className="text-slate-400" />
-                          {new Date(order.createdAt).toLocaleDateString(undefined, {
-                            year: 'numeric', month: 'long', day: 'numeric'
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col items-end gap-2">
-                        <div className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(order.orderStatus)}`}>
-                          {order.orderStatus}
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-900 font-bold text-lg">
-                          <FaMoneyBillWave className="text-amber-500" /> <span className="text-amber-600">৳{order.totalPrice}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Order Items */}
-                    <div className="space-y-3">
-                      {order.orderItems.map((item) => (
-                        <div key={item.product} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/60 p-3 rounded-xl border border-white/60 hover:bg-white/90 transition-colors">
-                          <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div>
-                              <p className="font-bold text-slate-800">{item.name}</p>
-                              <p className="text-sm text-slate-500 font-medium">Qty: {item.quantity} × <span className="text-amber-600 font-bold">৳{item.price}</span></p>
-                            </div>
+                <h3 className="text-2xl font-bold text-white mb-2">No orders found</h3>
+                <p className="text-gray-500 max-w-sm mb-8 text-lg mx-auto">You haven't placed any orders yet.</p>
+                <Link to="/dashboard">
+                  <GlowButton className="px-8" variant="primary">Start Shopping</GlowButton>
+                </Link>
+              </GlassCard>
+            </motion.div>
+          ) : (
+            <div className="space-y-6">
+              <AnimatePresence>
+                {orders.map((order, index) => (
+                  <motion.div
+                    key={order._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <GlassCard className="!p-0 overflow-hidden shadow-2xl group transition-all bg-[#1C1C1E] border-white/10 hover:bg-white/5 !rounded-3xl">
+                      {/* Header */}
+                      <div className="px-6 py-4 border-b border-white/5 bg-white/5 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-3">
+                            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Order ID</span>
+                            <span className="text-sm font-mono text-gray-300">#{order._id.slice(-8)}</span>
                           </div>
-
-                          {order.orderStatus === 'Delivered' && (
-                            <button
-                              onClick={() => {
-                                setSelectedProduct({ id: item.product, name: item.name });
-                                setSubmitModalOpen(true);
-                              }}
-                              className="flex items-center gap-2 text-sm font-semibold text-emerald-600 border border-emerald-200 bg-emerald-50/50 px-4 py-2 rounded-lg hover:bg-emerald-100/50 hover:border-emerald-300 transition-all w-full sm:w-auto justify-center"
-                            >
-                              <FaPen size={12} /> Write Review
-                            </button>
-                          )}
+                          <div className="flex items-center gap-2 text-gray-400 text-sm">
+                            <FaCalendarAlt className="text-gray-600" />
+                            {new Date(order.createdAt).toLocaleDateString(undefined, {
+                              year: 'numeric', month: 'long', day: 'numeric'
+                            })}
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        )}
-        <SubmitReviewModal
-          isOpen={submitModalOpen}
-          onClose={() => setSubmitModalOpen(false)}
-          productId={selectedProduct.id}
-          productName={selectedProduct.name}
-        />
+
+                        <div className="flex items-center gap-4">
+                          <div className={`px-4 py-1.5 rounded-full text-xs font-bold border ${getStatusColor(order.orderStatus)}`}>
+                            {order.orderStatus}
+                          </div>
+                          <div className="text-white font-bold text-lg">
+                            <span className="text-gray-500 text-sm font-normal mr-2">Total</span>
+                            ৳{order.totalPrice}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Items */}
+                      <div className="p-6 space-y-4">
+                        {order.orderItems.map((item) => (
+                          <div key={item.product} className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                            <div className="flex items-center gap-6 w-full">
+                              <div className="w-20 h-20 rounded-xl bg-black overflow-hidden shrink-0 border border-white/10 relative">
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover opacity-90"
+                                />
+                              </div>
+                              <div>
+                                <Link to={`/products/${item.product}`} className="font-bold text-white text-lg hover:text-blue-400 transition-colors">
+                                  {item.name}
+                                </Link>
+                                <p className="text-sm text-gray-500 mt-1">
+                                  Qty: {item.quantity} × <span className="text-gray-300">৳{item.price}</span>
+                                </p>
+                              </div>
+                            </div>
+
+                            {order.orderStatus === 'Delivered' && (
+                              <button
+                                onClick={() => {
+                                  setSelectedProduct({ id: item.product, name: item.name });
+                                  setSubmitModalOpen(true);
+                                }}
+                                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-white border border-white/10 hover:bg-white hover:text-black transition-all whitespace-nowrap"
+                              >
+                                Write Review
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </GlassCard>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+          <SubmitReviewModal
+            isOpen={submitModalOpen}
+            onClose={() => setSubmitModalOpen(false)}
+            productId={selectedProduct.id}
+            productName={selectedProduct.name}
+          />
+        </div>
       </div>
     </PageTransition>
   );
