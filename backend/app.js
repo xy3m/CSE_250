@@ -30,6 +30,15 @@ const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 // Use routes
+// Health check route - Must be first to bypass auth middleware
+app.get('/api/v1/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'HaatBazar API is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use('/api/v1', authRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1', orderRoutes);
@@ -54,14 +63,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// Health check route
-app.get('/api/v1/health', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'HaatBazar API is running',
-    timestamp: new Date().toISOString()
-  });
-});
+
 
 // Error handling middleware (must be last)
 const errorMiddleware = require('./middleware/error');
