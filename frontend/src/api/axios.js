@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
 
     // Check if the error is 401
     if (error.response?.status === 401) {
-      
+
       // *** THIS IS THE NEW LOGIC ***
       // Don't redirect if the 401 error came from the login or register page
       if (originalRequest.url === '/login' || originalRequest.url === '/register') {
