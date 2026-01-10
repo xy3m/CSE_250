@@ -131,7 +131,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
                                                 value={formData.name}
                                                 onChange={handleChange}
                                                 required={mode === 'register'}
-                                                className="w-full bg-white/50 border border-slate-200 rounded-xl px-12 py-3 outline-none focus:ring-2 focus:ring-teal-500/50 transition-all text-slate-700 placeholder:text-slate-400"
+                                                className="w-full bg-white/50 border border-slate-200 rounded-xl px-12 py-3 outline-none focus:ring-2 focus:ring-teal-500/50 transition-all text-slate-700 placeholder:text-black"
                                             />
                                         </div>
                                     </motion.div>
@@ -147,7 +147,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white/50 border border-slate-200 rounded-xl px-12 py-3 outline-none focus:ring-2 focus:ring-teal-500/50 transition-all text-slate-700 placeholder:text-slate-400"
+                                    className="w-full bg-white/50 border border-slate-200 rounded-xl px-12 py-3 outline-none focus:ring-2 focus:ring-teal-500/50 transition-all text-slate-700 placeholder:text-black"
                                 />
                             </div>
 
@@ -160,7 +160,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white/50 border border-slate-200 rounded-xl px-12 py-3 outline-none focus:ring-2 focus:ring-teal-500/50 transition-all text-slate-700 placeholder:text-slate-400"
+                                    className="w-full bg-white/50 border border-slate-200 rounded-xl px-12 py-3 outline-none focus:ring-2 focus:ring-teal-500/50 transition-all text-slate-700 placeholder:text-black"
                                 />
                             </div>
 
