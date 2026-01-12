@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-hot-toast'
 import { logoutUser } from '../redux/slices/authSlice'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaStore, FaSignOutAlt, FaHome, FaShoppingBag, FaBox } from 'react-icons/fa'
+import { FaStore, FaSignOutAlt, FaHome, FaShoppingBag, FaBox, FaUser } from 'react-icons/fa'
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -140,6 +140,10 @@ export default function Navbar() {
           <Link to="/orders/me" className={`flex flex-col items-center gap-1 ${location.pathname === '/orders/me' ? 'text-white' : 'text-gray-500'}`}>
             <FaBox size={20} />
             <span className="text-[10px] font-medium">Orders</span>
+          </Link>
+          <Link to="/profile" className={`flex flex-col items-center gap-1 ${location.pathname === '/profile' ? 'text-white' : 'text-gray-500'}`}>
+            <FaUser size={20} />
+            <span className="text-[10px] font-medium">Profile</span>
           </Link>
         </div>
       )}

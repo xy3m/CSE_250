@@ -122,88 +122,70 @@ export default function Products() {
             </div>
           ) : (
             /* 3. The New Modern Grid */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {filteredProducts.map((product, index) => (
+            /* 3. The New Modern Grid */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
                 <GlassCard
                   key={product._id}
-                  className="p-0 h-full flex flex-col group bg-white/80 border-white/40 shadow-xl hover:shadow-2xl hover:bg-white/90"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  className="group flex flex-col justify-between h-[460px] !p-0 overflow-hidden"
                 >
-
-                  {/* Image Container */}
-                  <div className="relative h-64 overflow-hidden rounded-t-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10 opacity-40" />
+                  {/* Image Area */}
+                  <div className="h-[280px] w-full bg-gray-800 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#151516] to-transparent z-10 opacity-60" />
                     <img
                       src={product.images?.[0]?.url || 'https://via.placeholder.com/300'}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
                     />
+
+                    {/* Stock Badge */}
                     {product.stock === 0 && (
-                      <div className="absolute inset-0 z-20 flex items-center justify-center backdrop-blur-sm bg-black/40">
-                        <span className="bg-rose-500/90 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg shadow-rose-500/20 backdrop-blur-md border border-white/20">
-                          Out of Stock
-                        </span>
+                      <div className="absolute top-4 right-4 bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md z-20">
+                        Sold Out
                       </div>
                     )}
-                    <div className="absolute bottom-3 left-3 z-20">
-                      <span className="text-xs font-medium text-white/90 bg-white/20 backdrop-blur-md px-2 py-1 rounded-lg border border-white/10">
-                        {product.category}
-                      </span>
-                    </div>
                   </div>
 
-                  {/* Content Body */}
-                  <div className="p-5 flex flex-col flex-grow relative">
-                    <div className="mb-1 text-xs text-teal-600 font-semibold tracking-wide uppercase">
-                      {product.vendor?.name || 'Local Seller'}
+                  {/* Content Area */}
+                  <div className="p-6 flex flex-col flex-grow bg-[#151516] relative z-20 border-t border-[#2C2C2E]">
+                    <div className="mb-auto">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-bold text-lg text-white leading-tight line-clamp-1">{product.name}</h3>
+                        <span className="text-gray-400 font-medium">৳{product.price}</span>
+                      </div>
+
+                      {/* Rating Stars */}
+                      <div className="flex items-center gap-1 mb-2">
+                        <div className="flex text-yellow-500 drop-shadow-sm">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <FaStar
+                              key={star}
+                              size={12}
+                              className={star <= (product.ratings || 0) ? "fill-current" : "text-gray-600"}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-500 font-medium ml-1">({product.numOfReviews})</span>
+                      </div>
+
+                      <p className="text-sm text-gray-500 line-clamp-2">{product.description}</p>
                     </div>
 
-                    <h3 className="font-bold text-xl text-slate-900 mb-2 line-clamp-1 group-hover:text-teal-600 transition-colors duration-300">
-                      {product.name}
-                    </h3>
-
-                    <p className="text-slate-600 text-sm mb-4 line-clamp-2 flex-grow group-hover:text-slate-800 transition-colors duration-300">
-                      {product.description}
-                    </p>
-
-                    <div className="flex items-center gap-1 mb-4">
-                      <div className="flex text-yellow-500 drop-shadow-sm">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <FaStar
-                            key={star}
-                            size={14}
-                            className={star <= (product.ratings || 0) ? "fill-current" : "text-slate-300"}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs text-slate-500 font-medium ml-1">({product.numOfReviews})</span>
-                    </div>
-
-                    <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-200/60">
-                      <span className="text-2xl font-bold text-slate-900">
-                        ৳{product.price}
-                      </span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedProductId(product._id);
-                            setReviewModalOpen(true);
-                          }}
-                          className="p-2 rounded-xl text-slate-400 hover:text-teal-600 hover:bg-teal-50 transition-colors"
-                          title="View Reviews"
-                        >
-                          <FaStar size={18} />
-                        </button>
-                        <GlowButton
-                          onClick={() => handleAddToCart(product)}
-                          disabled={product.stock === 0}
-                          className="!py-2 !px-4 text-sm bg-teal-600 hover:bg-teal-500"
-                        >
-                          Buy
-                        </GlowButton>
-                      </div>
+                    <div className="flex items-center gap-3 mt-4">
+                      <button
+                        onClick={() => { setSelectedProductId(product._id); setReviewModalOpen(true); }}
+                        className="p-2 rounded-full border border-[#38383A] text-gray-400 hover:text-white hover:bg-[#2C2C2E] transition-colors"
+                      >
+                        <FaStar size={14} />
+                      </button>
+                      <GlowButton
+                        onClick={() => handleAddToCart(product)}
+                        disabled={product.stock === 0}
+                        className={`flex-1 !py-2 !text-sm ${product.stock === 0 ? 'opacity-50' : ''}`}
+                        variant="primary"
+                      >
+                        {product.stock === 0 ? 'Unavailable' : 'Buy'}
+                      </GlowButton>
                     </div>
                   </div>
                 </GlassCard>

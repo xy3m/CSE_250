@@ -137,15 +137,21 @@ export default function MyOrders() {
                             </div>
 
                             {order.orderStatus === 'Delivered' && (
-                              <button
-                                onClick={() => {
-                                  setSelectedProduct({ id: item.product, name: item.name });
-                                  setSubmitModalOpen(true);
-                                }}
-                                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-white border border-white/10 hover:bg-white hover:text-black transition-all whitespace-nowrap"
-                              >
-                                Write Review
-                              </button>
+                              !item.isReviewed ? (
+                                <button
+                                  onClick={() => {
+                                    setSelectedProduct({ id: item.product, name: item.name });
+                                    setSubmitModalOpen(true);
+                                  }}
+                                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-white border border-white/10 hover:bg-white hover:text-black transition-all whitespace-nowrap"
+                                >
+                                  Write Review
+                                </button>
+                              ) : (
+                                <div className="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/20 bg-emerald-500/10 whitespace-nowrap">
+                                  Reviewed ✓
+                                </div>
+                              )
                             )}
                           </div>
                         ))}

@@ -11,12 +11,12 @@ async function updateStock(productId, quantity) {
   // Check if the product exists
   if (product) {
     product.stock -= quantity;
-    
+
     if (product.stock <= 0) {
       product.stock = 0; // Ensure stock doesn't go negative
       product.status = 'out-of-stock';
     }
-    
+
     await product.save({ validateBeforeSave: false });
   }
 }
@@ -37,7 +37,7 @@ exports.newOrder = catchAsyncErrors(async (req, res, next) => {
   // We check stock AND vendor ownership before creating anything
   for (const item of orderItems) {
     const product = await Product.findById(item.product);
-    
+
     if (!product) {
       return next(new ErrorHandler(`Product not found: ${item.name}`, 404));
     }
@@ -95,8 +95,38 @@ exports.getSingleOrder = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Get logged in user orders => /api/v1/orders/me
+// Get logged in user orders => /api/v1/orders/me
 exports.myOrders = catchAsyncErrors(async (req, res, next) => {
-  const orders = await Order.find({ user: req.user._id });
+  const orders = await Order.find({ user: req.user._id }).lean();
+
+  // Optimized: Fetch product reviews to determine "isReviewed" status
+  // 1. Collect all product IDs
+  const productIds = [];
+  orders.forEach(order => {
+    order.orderItems.forEach(item => {
+      productIds.push(item.product);
+    });
+  });
+
+  // 2. Fetch products with reviews (only necessary fields)
+  const products = await Product.find({ _id: { $in: productIds } }).select('reviews');
+
+  // 3. Create a lookup map: productId -> userHasReviewed (boolean)
+  const reviewMap = {};
+  products.forEach(product => {
+    const hasReviewed = product.reviews.some(
+      review => review.user.toString() === req.user._id.toString()
+    );
+    reviewMap[product._id.toString()] = hasReviewed;
+  });
+
+  // 4. Attach isReviewed flag to each order item
+  orders.forEach(order => {
+    order.orderItems.forEach(item => {
+      // Default to false if product not found (e.g. deleted)
+      item.isReviewed = reviewMap[item.product.toString()] || false;
+    });
+  });
 
   res.status(200).json({
     success: true,
@@ -140,7 +170,7 @@ exports.updateOrder = catchAsyncErrors(async (req, res, next) => {
   }
 
   order.orderStatus = req.body.orderStatus;
-  
+
   order.statusTimeline.push({
     status: req.body.orderStatus,
     timestamp: Date.now(),
