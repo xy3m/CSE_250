@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-hot-toast'
 import { logoutUser } from '../redux/slices/authSlice'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaStore, FaSignOutAlt } from 'react-icons/fa'
+import { FaStore, FaSignOutAlt, FaHome, FaShoppingBag, FaBox } from 'react-icons/fa'
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -120,6 +120,29 @@ export default function Navbar() {
           )}
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      {isAuthenticated && safeUser.role !== 'admin' && (
+        <div className="md:hidden fixed bottom-0 left-0 w-full bg-[#151516]/90 backdrop-blur-xl border-t border-white/10 flex justify-around items-center py-3 z-50 pb-safe">
+          <Link to="/dashboard" className={`flex flex-col items-center gap-1 ${location.pathname === '/dashboard' ? 'text-white' : 'text-gray-500'}`}>
+            <FaHome size={20} />
+            <span className="text-[10px] font-medium">Store</span>
+          </Link>
+          <Link to="/cart" className={`relative flex flex-col items-center gap-1 ${location.pathname === '/cart' ? 'text-white' : 'text-gray-500'}`}>
+            <div className="relative">
+              <FaShoppingBag size={20} />
+              {cartItems?.length > 0 && (
+                <span className="absolute -top-1 -right-2 bg-blue-500 text-white text-[9px] font-bold px-1 rounded-full">{cartItems.length}</span>
+              )}
+            </div>
+            <span className="text-[10px] font-medium">Bag</span>
+          </Link>
+          <Link to="/orders/me" className={`flex flex-col items-center gap-1 ${location.pathname === '/orders/me' ? 'text-white' : 'text-gray-500'}`}>
+            <FaBox size={20} />
+            <span className="text-[10px] font-medium">Orders</span>
+          </Link>
+        </div>
+      )}
     </nav>
   )
 }
