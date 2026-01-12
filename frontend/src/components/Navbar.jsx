@@ -88,17 +88,15 @@ export default function Navbar() {
           ) : (
             <div className="flex items-center gap-4">
               {safeUser.role !== 'vendor' && safeUser.role !== 'admin' && (
-                <Link to="/vendor/apply" className="text-teal-400 hover:text-teal-300">
-                  <FaStore className="text-xl sm:hidden" />
-                  <span className="hidden sm:block text-xs font-bold uppercase tracking-widest">Become a Vendor</span>
+                <Link to="/vendor/apply" className="hidden sm:block text-xs font-bold uppercase tracking-widest text-teal-400 hover:text-teal-300">
+                  Become a Vendor
                 </Link>
               )}
-              {safeUser.role !== 'vendor' && safeUser.role !== 'admin' && <div className="h-4 w-px bg-white/20" />}
+              {safeUser.role !== 'vendor' && safeUser.role !== 'admin' && <div className="hidden sm:block h-4 w-px bg-white/20" />}
 
               {safeUser.role === 'vendor' && (
-                <Link to="/vendor/dashboard" className="text-blue-400 hover:text-blue-300">
-                  <FaStore className="text-xl sm:hidden" />
-                  <span className="hidden sm:block text-xs font-bold uppercase tracking-widest">Vendor Console</span>
+                <Link to="/vendor/dashboard" className="hidden sm:block text-xs font-bold uppercase tracking-widest text-blue-400 hover:text-blue-300">
+                  Vendor Console
                 </Link>
               )}
 

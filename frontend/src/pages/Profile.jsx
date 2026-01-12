@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { getUserProfile } from '../redux/slices/authSlice'
 import axios from '../api/axios'
@@ -107,6 +108,24 @@ export default function Profile() {
                           <FaCalendarAlt className="text-green-400" /> Joined {new Date(user?.createdAt).toLocaleDateString()}
                         </div>
                       </div>
+                    </div>
+
+
+                    {/* Mobile/Desktop Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0 sm:ml-auto">
+                      {user?.role === 'vendor' ? (
+                        <Link to="/vendor/dashboard">
+                          <GlowButton className="whitespace-nowrap">
+                            Vendor Console
+                          </GlowButton>
+                        </Link>
+                      ) : user?.role !== 'admin' && (
+                        <Link to="/vendor/apply">
+                          <GlowButton variant="secondary" className="whitespace-nowrap">
+                            Become a Vendor
+                          </GlowButton>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </GlassCard>
@@ -244,6 +263,6 @@ export default function Profile() {
           </div>
         </div>
       </div>
-    </PageTransition>
+    </PageTransition >
   )
 }
