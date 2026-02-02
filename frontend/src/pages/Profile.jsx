@@ -9,6 +9,7 @@ import { FaUser, FaEnvelope, FaCalendarAlt, FaMapMarkerAlt, FaPhone, FaTrashAlt,
 import GlassCard from '../components/ui/GlassCard'
 import PageTransition from '../components/ui/PageTransition'
 import GlowButton from '../components/ui/GlowButton'
+import { showConfirmToast } from '../components/ui/ConfirmToast'
 
 export default function Profile() {
   const dispatch = useDispatch()
@@ -48,15 +49,16 @@ export default function Profile() {
   }
 
   // Handle Delete Address
-  const handleDeleteAddress = async (addressId) => {
-    if (!window.confirm("Delete this address?")) return;
-    try {
-      await axios.delete(`/me/address/${addressId}`)
-      toast.success('Address deleted')
-      dispatch(getUserProfile())
-    } catch (error) {
-      toast.error('Failed to delete address')
-    }
+  const handleDeleteAddress = (addressId) => {
+    showConfirmToast('Delete this address?', async () => {
+      try {
+        await axios.delete(`/me/address/${addressId}`)
+        toast.success('Address deleted')
+        dispatch(getUserProfile())
+      } catch (error) {
+        toast.error('Failed to delete address')
+      }
+    })
   }
 
   const sectionVariants = {

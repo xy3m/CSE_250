@@ -17,9 +17,9 @@ export default function Navbar() {
   const safeUser = user || {};
 
   const handleLogout = async () => {
+    navigate('/')
     await dispatch(logoutUser())
     toast.success('Logged out successfully')
-    navigate('/')
   }
 
   // Animation variants

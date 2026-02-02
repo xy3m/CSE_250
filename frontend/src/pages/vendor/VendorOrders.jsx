@@ -9,6 +9,7 @@ import { FaBoxOpen, FaShippingFast, FaCheckCircle, FaTrashAlt, FaMapMarkerAlt, F
 import GlassCard from '../../components/ui/GlassCard';
 import GlowButton from '../../components/ui/GlowButton';
 import PageTransition from '../../components/ui/PageTransition';
+import { showConfirmToast } from '../../components/ui/ConfirmToast';
 
 export default function VendorOrders() {
   const { user, isAuthenticated } = useSelector(state => state.auth);
@@ -48,8 +49,8 @@ export default function VendorOrders() {
     }
   };
 
-  const handleClearHistory = async () => {
-    if (window.confirm('Are you sure you want to clear all delivered order history?')) {
+  const handleClearHistory = () => {
+    showConfirmToast('Are you sure you want to clear all delivered order history?', async () => {
       try {
         await axios.delete('/vendor/orders/delivered');
         toast.success('History cleared');
@@ -57,7 +58,7 @@ export default function VendorOrders() {
       } catch (err) {
         toast.error('Failed to clear history');
       }
-    }
+    });
   };
 
   const statusColors = {

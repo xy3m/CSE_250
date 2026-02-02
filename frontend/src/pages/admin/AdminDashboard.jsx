@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 import GlassCard from '../../components/ui/GlassCard'
 import GlowButton from '../../components/ui/GlowButton'
+import { showConfirmToast } from '../../components/ui/ConfirmToast'
 import { FaUserTimes, FaTrashAlt, FaCheck, FaTimes, FaEdit, FaBoxOpen, FaUsers } from 'react-icons/fa'
 
 export default function AdminDashboard() {
@@ -88,8 +89,8 @@ export default function AdminDashboard() {
 
   // --- Handlers ---
 
-  const handleDeleteUser = async (id) => {
-    if (window.confirm('Are you sure you want to delete this user? This is permanent.')) {
+  const handleDeleteUser = (id) => {
+    showConfirmToast('Are you sure you want to delete this user? This is permanent.', async () => {
       try {
         await axios.delete(`/admin/user/${id}`);
         toast.success('User deleted successfully');
@@ -97,7 +98,7 @@ export default function AdminDashboard() {
       } catch (err) {
         toast.error('Failed to delete user');
       }
-    }
+    });
   };
 
   const handleApprove = async (id) => {
@@ -120,17 +121,16 @@ export default function AdminDashboard() {
     }
   }
 
-  const handleProductDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) {
-      return
-    }
-    try {
-      await axios.delete(`/products/${id}`)
-      toast.success('Product deleted')
-      fetchAllProducts()
-    } catch (err) {
-      toast.error('Failed to delete product')
-    }
+  const handleProductDelete = (id) => {
+    showConfirmToast('Are you sure you want to delete this product?', async () => {
+      try {
+        await axios.delete(`/products/${id}`)
+        toast.success('Product deleted')
+        fetchAllProducts()
+      } catch (err) {
+        toast.error('Failed to delete product')
+      }
+    });
   }
 
   // Prevent crash if user is null (during logout)

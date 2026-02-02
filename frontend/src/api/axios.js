@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
 
       // *** THIS IS THE NEW LOGIC ***
       // Don't redirect if the 401 error came from the login or register page
-      if (originalRequest.url === '/login' || originalRequest.url === '/register') {
+      if (originalRequest.url === '/login' || originalRequest.url === '/register' || originalRequest.url === '/logout' || originalRequest.url?.includes('/logout')) {
         return Promise.reject(error); // Just let the component's catch() handle it
       }
 

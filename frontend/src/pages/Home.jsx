@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import GlowButton from '../components/ui/GlowButton'
 import { FaSignInAlt, FaUserPlus } from 'react-icons/fa'
 import AuthModal from '../components/auth/AuthModal'
@@ -16,13 +16,18 @@ export default function Home() {
   }
 
   // If logged in:
-  if (isAuthenticated) {
-    // If Admin -> Go to Admin Dashboard
-    if (user?.role === 'admin') {
-      return <Navigate to="/admin/dashboard" replace />
+  const navigate = useNavigate()
+
+  const handleEnterStore = () => {
+    if (isAuthenticated) {
+      if (user?.role === 'admin') {
+        navigate('/admin/dashboard')
+      } else {
+        navigate('/dashboard')
+      }
+    } else {
+      openAuth('login')
     }
-    // Everyone else -> Go to Shop Dashboard
-    return <Navigate to="/dashboard" replace />
   }
 
   return (
@@ -45,7 +50,7 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <GlowButton onClick={() => openAuth('login')} variant="primary" className="px-10 py-4 text-lg">
+            <GlowButton onClick={handleEnterStore} variant="primary" className="px-10 py-4 text-lg">
               Enter Store
             </GlowButton>
             <button

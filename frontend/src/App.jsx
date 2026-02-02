@@ -3,10 +3,10 @@ import { Toaster } from 'react-hot-toast'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserProfile } from './redux/slices/authSlice'
-import { AnimatePresence } from 'framer-motion'
 import Profile from './pages/Profile.jsx'
 // Component Imports
 import Navbar from './components/Navbar.jsx'
+import PrivateRoute from './components/PrivateRoute.jsx'
 
 // Page Imports (User)
 import Home from './pages/Home.jsx'
@@ -34,27 +34,102 @@ function AnimatedRoutes() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/products/edit/:id" element={<AdminEditProduct />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/:id" element={<ProductDetails />} /> {/* [NEW] */}
-        <Route path="/vendor/dashboard" element={<VendorDashboard />} />
-        <Route path="/vendor/products/new" element={<AddProduct />} />
-        <Route path="/vendor/products" element={<VendorProducts />} />
-        <Route path="/vendor/products/edit/:id" element={<EditProduct />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/orders/me" element={<MyOrders />} />
-        <Route path="/vendor/orders" element={<VendorOrders />} />
-        <Route path="/vendor/apply" element={<VendorApplication />} />
-      </Routes>
-    </AnimatePresence>
+    <Routes location={location} key={location.pathname}>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/products" element={<Products />} />
+      <Route path="/products/:id" element={<ProductDetails />} />
+      <Route path="/cart" element={<Cart />} />
+      <Route path="/vendor/apply" element={<VendorApplication />} />
+
+      {/* Protected Routes (Any Authenticated User) */}
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/orders/me"
+        element={
+          <PrivateRoute>
+            <MyOrders />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Admin Routes */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <PrivateRoute allowedRoles={['admin']}>
+            <AdminDashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/products/edit/:id"
+        element={
+          <PrivateRoute allowedRoles={['admin']}>
+            <AdminEditProduct />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Vendor Routes */}
+      <Route
+        path="/vendor/dashboard"
+        element={
+          <PrivateRoute allowedRoles={['vendor']}>
+            <VendorDashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/vendor/products/new"
+        element={
+          <PrivateRoute allowedRoles={['vendor']}>
+            <AddProduct />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/vendor/products"
+        element={
+          <PrivateRoute allowedRoles={['vendor']}>
+            <VendorProducts />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/vendor/products/edit/:id"
+        element={
+          <PrivateRoute allowedRoles={['vendor']}>
+            <EditProduct />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/vendor/orders"
+        element={
+          <PrivateRoute allowedRoles={['vendor']}>
+            <VendorOrders />
+          </PrivateRoute>
+        }
+      />
+    </Routes>
   );
 }
 
@@ -64,15 +139,17 @@ function App() {
   const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    const loadUser = async () => {
-      if (isAuthenticated) {
-        // Force fetch the latest user data from server
+    const initAuth = async () => {
+      // Check if we have a token in storage
+      const token = localStorage.getItem('token');
+      if (token) {
+        // Verify token with server
         await dispatch(getUserProfile())
       }
       setIsLoaded(true)
     }
-    loadUser()
-  }, [dispatch, isAuthenticated])
+    initAuth()
+  }, [dispatch])
 
   // Optional: Show a blank screen or spinner for a split second 
   // while we check the server for the latest status.

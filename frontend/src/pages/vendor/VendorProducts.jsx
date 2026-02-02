@@ -7,6 +7,7 @@ import { FaBoxOpen, FaPlus, FaPen, FaTrashAlt, FaCubes } from 'react-icons/fa'
 import GlassCard from '../../components/ui/GlassCard'
 import PageTransition from '../../components/ui/PageTransition'
 import GlowButton from '../../components/ui/GlowButton'
+import { showConfirmToast } from '../../components/ui/ConfirmToast'
 
 export default function VendorProducts() {
   const [products, setProducts] = useState([])
@@ -27,20 +28,16 @@ export default function VendorProducts() {
 
   useEffect(() => { fetchProducts() }, [])
 
-  const deleteProduct = async (id) => {
-    // Add a confirmation dialog
-    if (!window.confirm('Are you sure you want to delete this product?')) {
-      return
-    }
-
-    try {
-      // This route comes from productRoutes.js (DELETE /:id)
-      await axios.delete(`/products/${id}`)
-      toast.success('Product deleted')
-      fetchProducts() // Re-fetch products to update the list
-    } catch {
-      toast.error('Delete failed')
-    }
+  const deleteProduct = (id) => {
+    showConfirmToast('Are you sure you want to delete this product?', async () => {
+      try {
+        await axios.delete(`/products/${id}`)
+        toast.success('Product deleted')
+        fetchProducts() // Re-fetch products to update the list
+      } catch {
+        toast.error('Delete failed')
+      }
+    })
   }
 
   if (loading) {
