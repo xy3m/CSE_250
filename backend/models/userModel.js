@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     maxLength: [15, 'Phone number cannot exceed 15 characters']
   },
-  
+
   vendorInfo: {
     businessName: {
       type: String,
@@ -59,9 +59,9 @@ const userSchema = new mongoose.Schema({
       type: String
     },
     // === NEW FIELD FOR VERIFICATION ===
+    // === NEW FIELD FOR VERIFICATION ===
     taxIdVerified: {
-      type: Boolean,
-      default: false
+      type: Boolean
     },
     // ==================================
     phoneNumber: {
@@ -73,13 +73,11 @@ const userSchema = new mongoose.Schema({
       maxLength: [1000, 'Description cannot exceed 1000 characters']
     },
     status: {
-        type: String,
-        enum: ['pending', 'approved', 'rejected'],
-        default: 'pending'
-      },
+      type: String,
+      enum: ['pending', 'approved', 'rejected']
+    },
     isApproved: {
-      type: Boolean,
-      default: false
+      type: Boolean
     },
     applicationDate: {
       type: Date
@@ -130,7 +128,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
   }
@@ -139,19 +137,19 @@ userSchema.pre('save', async function(next) {
 });
 
 // Generate JWT Token
-userSchema.methods.getJWTToken = function() {
+userSchema.methods.getJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || '7d'
   });
 };
 
 // Compare Password
-userSchema.methods.comparePassword = async function(enteredPassword) {
+userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
 // Generate Password Reset Token
-userSchema.methods.getResetPasswordToken = function() {
+userSchema.methods.getResetPasswordToken = function () {
   const resetToken = crypto.randomBytes(20).toString('hex');
   this.resetPasswordToken = crypto
     .createHash('sha256')
