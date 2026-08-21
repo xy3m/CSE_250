@@ -84,6 +84,16 @@ app.use('/api/v1', adminRoutes);
 app.use('/api/v1', userRoutes);
 app.use('/api/v1', paymentRoutes);
 
+// Fallback direct mounts for serverless path rewrites
+app.use('/', authRoutes);
+app.use('/products', productRoutes);
+app.use('/', orderRoutes);
+app.use('/', vendorRoutes);
+app.use('/', adminRoutes);
+app.use('/', userRoutes);
+app.use('/', paymentRoutes);
+
+
 // Root route
 app.get('/', (req, res) => {
   res.json({

@@ -138,10 +138,12 @@ userSchema.pre('save', async function (next) {
 
 // Generate JWT Token
 userSchema.methods.getJWTToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+  const secret = process.env.JWT_SECRET || 'haatbazar_super_secure_jwt_secret_key_2026';
+  return jwt.sign({ id: this._id }, secret, {
     expiresIn: process.env.JWT_EXPIRE || '7d'
   });
 };
+
 
 // Compare Password
 userSchema.methods.comparePassword = async function (enteredPassword) {

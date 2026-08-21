@@ -3,15 +3,14 @@
 // Send token and save in cookie
 const sendToken = (user, statusCode, res) => {
   const token = user.getJWTToken();
+  const cookieExpireDays = Number(process.env.COOKIE_EXPIRE) || 7;
 
   // Cookie options
   const options = {
     expires: new Date(
-      Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+      Date.now() + cookieExpireDays * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    // FORCE SECURE COOKIES FOR DEPLOYMENT
-    // (Render requires 'trust proxy' if behind a proxy, but usually this works)
     secure: true,
     sameSite: 'none'
   };
@@ -24,3 +23,4 @@ const sendToken = (user, statusCode, res) => {
 };
 
 module.exports = sendToken;
+
