@@ -30,7 +30,11 @@ router.get('/admin/products/category', getProductsByCategory);
 
 // Vendor application management
 router.get('/admin/vendor-applications', getPendingVendorApplications);
+router.get('/admin/vendor/applications', getPendingVendorApplications);
 router.put('/admin/vendor-applications/:id/approve', approveVendorApplication);
+router.put('/admin/vendor/applications/:id/approve', approveVendorApplication);
 router.put('/admin/vendor-applications/:id/reject', rejectVendorApplication);
+router.put('/admin/vendor/applications/:id/reject', rejectVendorApplication);
+
 
 module.exports = router;

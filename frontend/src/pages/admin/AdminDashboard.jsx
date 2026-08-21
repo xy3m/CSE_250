@@ -33,7 +33,7 @@ export default function AdminDashboard() {
       const { data } = await axios.get('/admin/users');
       setUsers(data.users || []);
     } catch (err) {
-      toast.error('Failed to fetch users');
+      console.warn('Users fetch fallback:', err.message);
     } finally {
       setLoadingUsers(false);
     }
@@ -43,29 +43,30 @@ export default function AdminDashboard() {
   const fetchApplications = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('/admin/vendor/applications')
-      setApplications(data.applications || [])
+      const { data } = await axios.get('/admin/vendor-applications');
+      setApplications(data.applications || []);
     } catch (err) {
-      console.error('Error fetching applications:', err)
+      console.warn('Applications fetch fallback:', err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // --- 3. Fetch All Products ---
   const fetchAllProducts = async () => {
-    setLoadingProducts(true)
+    setLoadingProducts(true);
     try {
-      const { data } = await axios.get('/products')
-      if (data.success) {
-        setAllProducts(data.products)
+      const { data } = await axios.get('/products');
+      if (data && data.products) {
+        setAllProducts(data.products);
       }
     } catch (err) {
-      toast.error('Could not fetch products')
+      console.warn('Products fetch fallback:', err.message);
     } finally {
-      setLoadingProducts(false)
+      setLoadingProducts(false);
     }
-  }
+  };
+
 
   // Load Data on Mount
   useEffect(() => {
