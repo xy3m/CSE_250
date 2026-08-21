@@ -1,67 +1,160 @@
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate, Link } from 'react-router-dom'
 import GlowButton from '../components/ui/GlowButton'
-import { FaSignInAlt, FaUserPlus } from 'react-icons/fa'
+import { FaSignInAlt, FaUserPlus, FaShieldAlt, FaStore, FaUserCheck, FaBolt, FaArrowRight } from 'react-icons/fa'
+import { motion } from 'framer-motion'
+import { toast } from 'react-hot-toast'
+import { demoLoginUser } from '../redux/slices/authSlice'
 import AuthModal from '../components/auth/AuthModal'
 
 export default function Home() {
+  const dispatch = useDispatch()
   const { user, isAuthenticated } = useSelector((state) => state.auth)
   const [authOpen, setAuthOpen] = useState(false)
   const [initialMode, setInitialMode] = useState('login')
+  const [demoLoadingRole, setDemoLoadingRole] = useState(null)
+  const navigate = useNavigate()
 
   const openAuth = (mode) => {
     setInitialMode(mode)
     setAuthOpen(true)
   }
 
-  // If logged in:
-  const navigate = useNavigate()
+  const handleRoleRedirect = (role) => {
+    if (role === 'admin') {
+      navigate('/admin/dashboard')
+    } else if (role === 'vendor') {
+      navigate('/vendor/dashboard')
+    } else {
+      navigate('/dashboard')
+    }
+  }
 
   const handleEnterStore = () => {
     if (isAuthenticated) {
-      if (user?.role === 'admin') {
-        navigate('/admin/dashboard')
-      } else {
-        navigate('/dashboard')
-      }
+      handleRoleRedirect(user?.role)
     } else {
       openAuth('login')
+    }
+  }
+
+  const handleDemoLogin = async (role) => {
+    setDemoLoadingRole(role)
+    try {
+      const resultAction = await dispatch(demoLoginUser({ role }))
+      if (demoLoginUser.rejected.match(resultAction)) {
+        throw new Error(resultAction.payload || `Demo login as ${role} failed`)
+      }
+      const loggedUser = resultAction.payload.user
+      toast.success(`Welcome to HaatBazar (${role.toUpperCase()} mode)!`)
+      handleRoleRedirect(loggedUser.role)
+    } catch (err) {
+      toast.error(err.message || 'Demo login failed')
+    } finally {
+      setDemoLoadingRole(null)
     }
   }
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white/20 selection:text-white">
 
-      {/* Navbar Placeholder (Navbar component sits on top, ensuring it matches later) */}
-
       {/* Hero Section: "The Pro Standard" */}
-      <section className="relative h-screen flex flex-col justify-center items-center text-center overflow-hidden">
+      <section className="relative min-h-screen flex flex-col justify-center items-center text-center overflow-hidden pt-24 pb-16">
 
         {/* Subtle Titanium Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none" />
 
-        <div className="relative z-10 max-w-4xl px-6">
-          <h1 className="text-7xl md:text-9xl font-bold tracking-tighter mb-6 bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent">
+        <div className="relative z-10 max-w-5xl px-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold text-gray-200 mb-6 backdrop-blur-md">
+            <FaBolt className="text-amber-400" /> Full-Stack Multi-Vendor E-Commerce Platform
+          </div>
+
+          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent">
             HaatBazar.
           </h1>
-          <p className="text-2xl md:text-3xl text-gray-400 font-medium max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-400 font-medium max-w-2xl mx-auto mb-8 leading-relaxed">
             আপনার বাজার, আপনার হাতের মুঠোয়
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <GlowButton onClick={handleEnterStore} variant="primary" className="px-10 py-4 text-lg">
-              Enter Store
+          {/* Primary CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <GlowButton onClick={handleEnterStore} variant="primary" className="px-8 py-3.5 text-base">
+              {isAuthenticated ? 'Go to Dashboard' : 'Enter Store'}
             </GlowButton>
-            <button
-              onClick={() => openAuth('register')}
-              className="text-lg text-blue-400 hover:text-blue-300 transition-colors font-medium flex items-center gap-2 group"
+            <Link
+              to="/login"
+              className="text-base text-gray-300 hover:text-white transition-colors font-medium flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10"
             >
-              Join the Ecosystem <span className="group-hover:translate-x-1 transition-transform">›</span>
-            </button>
+              Manual Sign In <FaArrowRight size={12} />
+            </Link>
+          </div>
+
+          {/* ⚡ 1-Click Instant Demo Showcase Bar */}
+          <div className="mt-4 p-5 sm:p-6 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-xl max-w-3xl mx-auto shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                <FaBolt className="text-yellow-400" /> Instant 1-Click Demo Login
+              </div>
+              <span className="text-[11px] text-gray-500">No registration required</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Admin Button */}
+              <button
+                onClick={() => handleDemoLogin('admin')}
+                disabled={demoLoadingRole !== null}
+                className="flex items-center justify-between sm:justify-center gap-3 p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/30 hover:bg-purple-500/20 hover:border-purple-500/50 text-purple-300 font-semibold text-xs transition-all group disabled:opacity-50"
+              >
+                <div className="flex items-center gap-2.5">
+                  <FaShieldAlt className="text-purple-400" size={14} />
+                  <span>Super Admin</span>
+                </div>
+                {demoLoadingRole === 'admin' ? (
+                  <div className="animate-spin rounded-full h-3 w-3 border-t-2 border-b-2 border-purple-400"></div>
+                ) : (
+                  <span className="text-[10px] bg-purple-500/20 px-2 py-0.5 rounded text-purple-300 font-mono">1-Click</span>
+                )}
+              </button>
+
+              {/* Vendor Button */}
+              <button
+                onClick={() => handleDemoLogin('vendor')}
+                disabled={demoLoadingRole !== null}
+                className="flex items-center justify-between sm:justify-center gap-3 p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 hover:border-blue-500/50 text-blue-300 font-semibold text-xs transition-all group disabled:opacity-50"
+              >
+                <div className="flex items-center gap-2.5">
+                  <FaStore className="text-blue-400" size={14} />
+                  <span>Merchant Vendor</span>
+                </div>
+                {demoLoadingRole === 'vendor' ? (
+                  <div className="animate-spin rounded-full h-3 w-3 border-t-2 border-b-2 border-blue-400"></div>
+                ) : (
+                  <span className="text-[10px] bg-blue-500/20 px-2 py-0.5 rounded text-blue-300 font-mono">1-Click</span>
+                )}
+              </button>
+
+              {/* Customer Button */}
+              <button
+                onClick={() => handleDemoLogin('customer')}
+                disabled={demoLoadingRole !== null}
+                className="flex items-center justify-between sm:justify-center gap-3 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50 text-emerald-300 font-semibold text-xs transition-all group disabled:opacity-50"
+              >
+                <div className="flex items-center gap-2.5">
+                  <FaUserCheck className="text-emerald-400" size={14} />
+                  <span>Shopper Demo</span>
+                </div>
+                {demoLoadingRole === 'customer' ? (
+                  <div className="animate-spin rounded-full h-3 w-3 border-t-2 border-b-2 border-emerald-400"></div>
+                ) : (
+                  <span className="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded text-emerald-300 font-mono">1-Click</span>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </section>
+
 
       {/* Feature Showcase: "Bento Grid" Style */}
       <section className="py-32 px-6 max-w-[1400px] mx-auto">
