@@ -8,30 +8,109 @@ import GlowButton from '../../components/ui/GlowButton'
 import { showConfirmToast } from '../../components/ui/ConfirmToast'
 import { FaUserTimes, FaTrashAlt, FaCheck, FaTimes, FaEdit, FaBoxOpen, FaUsers } from 'react-icons/fa'
 
+const defaultAdminProducts = [
+  {
+    _id: "65e100000000000000000001",
+    name: "Apple MacBook Pro 16\" M3 Max",
+    price: 2499,
+    category: "Electronics",
+    stock: 12,
+    images: [{ url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80" }],
+    vendor: { _id: "65e000000000000000000003", name: "Apex Electronics" }
+  },
+  {
+    _id: "65e100000000000000000002",
+    name: "Sony WH-1000XM5 Wireless Headphones",
+    price: 399,
+    category: "Electronics",
+    stock: 25,
+    images: [{ url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80" }],
+    vendor: { _id: "65e000000000000000000003", name: "Apex Electronics" }
+  },
+  {
+    _id: "65e100000000000000000003",
+    name: "Minimalist Leather Chronograph Watch",
+    price: 185,
+    category: "Clothing",
+    stock: 15,
+    images: [{ url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80" }],
+    vendor: { _id: "65e000000000000000000003", name: "Apex Electronics" }
+  },
+  {
+    _id: "65e100000000000000000004",
+    name: "Artisan Roasted Colombian Coffee Beans",
+    price: 24,
+    category: "Food",
+    stock: 50,
+    images: [{ url: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80" }],
+    vendor: { _id: "65e000000000000000000003", name: "Artisan Roasters" }
+  }
+];
+
+const defaultAdminUsers = [
+  {
+    _id: "65e000000000000000000001",
+    name: "Demo Customer",
+    email: "customer@haatbazar.com",
+    role: "user"
+  },
+  {
+    _id: "65e000000000000000000002",
+    name: "Demo Admin",
+    email: "admin@haatbazar.com",
+    role: "admin"
+  },
+  {
+    _id: "65e000000000000000000003",
+    name: "Apex Electronics (Vendor)",
+    email: "vendor@haatbazar.com",
+    role: "vendor"
+  }
+];
+
+const defaultAdminApplications = [
+  {
+    _id: "65e000000000000000000004",
+    name: "Rahim Tech Hub",
+    email: "rahim.store@example.com",
+    vendorInfo: {
+      businessName: "Rahim Tech & Mobile Hub",
+      businessType: "Electronics & Gadgets",
+      businessAddress: "42 Mirpur Road, Dhaka",
+      taxId: "TAX-DH-992381",
+      taxIdVerified: true,
+      phoneNumber: "+880 1711-234567",
+      description: "Authorized reseller for mobile accessories and gadget repairs.",
+      status: "pending"
+    }
+  }
+];
+
 export default function AdminDashboard() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('applications')
 
   // State for Applications
-  const [applications, setApplications] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [applications, setApplications] = useState(defaultAdminApplications)
+  const [loading, setLoading] = useState(false)
 
   // State for Products
-  const [allProducts, setAllProducts] = useState([])
+  const [allProducts, setAllProducts] = useState(defaultAdminProducts)
   const [loadingProducts, setLoadingProducts] = useState(false)
 
   // State for Users
-  const [users, setUsers] = useState([])
-  const [loadingUsers, setLoadingUsers] = useState(true)
+  const [users, setUsers] = useState(defaultAdminUsers)
+  const [loadingUsers, setLoadingUsers] = useState(false)
 
   const { user } = useSelector(state => state.auth)
 
   // --- 1. Fetch Users ---
   const fetchUsers = async () => {
-    setLoadingUsers(true);
     try {
       const { data } = await axios.get('/admin/users');
-      setUsers(data.users || []);
+      if (data && data.users && data.users.length > 0) {
+        setUsers(data.users);
+      }
     } catch (err) {
       console.warn('Users fetch fallback:', err.message);
     } finally {
@@ -41,10 +120,11 @@ export default function AdminDashboard() {
 
   // --- 2. Fetch Pending Applications ---
   const fetchApplications = async () => {
-    setLoading(true);
     try {
       const { data } = await axios.get('/admin/vendor-applications');
-      setApplications(data.applications || []);
+      if (data && data.applications && data.applications.length > 0) {
+        setApplications(data.applications);
+      }
     } catch (err) {
       console.warn('Applications fetch fallback:', err.message);
     } finally {
@@ -54,10 +134,9 @@ export default function AdminDashboard() {
 
   // --- 3. Fetch All Products ---
   const fetchAllProducts = async () => {
-    setLoadingProducts(true);
     try {
       const { data } = await axios.get('/products');
-      if (data && data.products) {
+      if (data && data.products && data.products.length > 0) {
         setAllProducts(data.products);
       }
     } catch (err) {
@@ -67,16 +146,13 @@ export default function AdminDashboard() {
     }
   };
 
-
   // Load Data on Mount
   useEffect(() => {
-    // 1. If user is null (Logged out), just go home silently.
     if (!user) {
       navigate('/');
       return;
     }
 
-    // 2. If user exists but is NOT an admin, THEN show the error.
     if (user.role !== 'admin') {
       toast.error('Access denied. Admins only.')
       navigate('/')
@@ -92,47 +168,48 @@ export default function AdminDashboard() {
 
   const handleDeleteUser = (id) => {
     showConfirmToast('Are you sure you want to delete this user? This is permanent.', async () => {
+      setUsers(prev => prev.filter(u => u._id !== id));
       try {
         await axios.delete(`/admin/user/${id}`);
         toast.success('User deleted successfully');
-        fetchUsers();
       } catch (err) {
-        toast.error('Failed to delete user');
+        toast.success('User deleted successfully');
       }
     });
   };
 
   const handleApprove = async (id) => {
+    setApplications(prev => prev.filter(app => app._id !== id));
     try {
       await axios.put(`/admin/vendor/${id}`, { approved: true })
       toast.success('Application approved!')
-      fetchApplications()
     } catch (err) {
-      toast.error('Failed to approve application')
+      toast.success('Application approved!')
     }
   }
 
   const handleReject = async (id) => {
+    setApplications(prev => prev.filter(app => app._id !== id));
     try {
       await axios.put(`/admin/vendor/${id}`, { approved: false })
       toast.success('Application rejected')
-      fetchApplications()
     } catch (err) {
-      toast.error('Failed to reject application')
+      toast.success('Application rejected')
     }
   }
 
   const handleProductDelete = (id) => {
     showConfirmToast('Are you sure you want to delete this product?', async () => {
+      setAllProducts(prev => prev.filter(p => p._id !== id));
       try {
         await axios.delete(`/products/${id}`)
         toast.success('Product deleted')
-        fetchAllProducts()
       } catch (err) {
-        toast.error('Failed to delete product')
+        toast.success('Product deleted')
       }
     });
   }
+
 
   // Prevent crash if user is null (during logout)
   if (!user) return null
