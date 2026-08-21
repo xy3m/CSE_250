@@ -1,5 +1,6 @@
 # HaatBazar — Multi-Vendor E-Commerce Platform
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_Platform-00C7B7?style=for-the-badge&logo=vercel&logoColor=white)](https://cse-250.vercel.app/)
 [![React](https://img.shields.io/badge/Frontend-React%2019%20%7C%20Vite-61DAFB?logo=react&logoColor=black)](https://reactjs.org/)
 [![NodeJS](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
@@ -13,7 +14,10 @@
 
 ## 🚀 Live Demo & 1-Click Demo Credentials
 
+🌐 **Live Application URL:** [https://cse-250.vercel.app/](https://cse-250.vercel.app/)
+
 > **Interactive Demo:** Access all 3 roles instantly using the built-in **"1-Click Test"** buttons on the Login page without needing to register or fill out forms.
+
 
 | Role | Dashboard URL | Demo Credentials | Capabilities |
 | :--- | :--- | :--- | :--- |
