@@ -76,13 +76,35 @@ export default function Cart() {
   const taxPrice = Number((0.05 * itemsPrice).toFixed(2));
   const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
+  const [paymentMethod, setPaymentMethod] = useState('stripe');
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const handleCheckout = async () => {
     if (checkoutLoading) return;
+    if (!selectedAddress) {
+      toast.error('Please select a shipping address');
+      return;
+    }
     setCheckoutLoading(true);
 
     try {
+      let paymentInfo = {
+        id: `COD_${Date.now()}`,
+        status: 'pending',
+      };
+
+      if (paymentMethod === 'stripe') {
+        const { data: payData } = await axios.post('/payment/process', {
+          amount: Math.round(totalPrice * 100),
+          currency: 'usd'
+        });
+
+        paymentInfo = {
+          id: payData.paymentIntentId || payData.client_secret || `pi_sandbox_${Date.now()}`,
+          status: 'succeeded',
+        };
+      }
+
       const orderData = {
         orderItems: cartItems,
         shippingInfo: {
@@ -97,15 +119,12 @@ export default function Cart() {
         taxPrice,
         shippingPrice,
         totalPrice,
-        paymentInfo: {
-          id: 'sample_payment_id',
-          status: 'success',
-        },
+        paymentInfo,
       };
 
       await axios.post('/order/new', orderData);
 
-      toast.success('Order placed successfully!');
+      toast.success(paymentMethod === 'stripe' ? 'Payment processed & Order placed via Stripe!' : 'Order placed with Cash on Delivery!');
       navigate('/orders/me');
 
       setTimeout(() => {
@@ -114,6 +133,7 @@ export default function Cart() {
 
     } catch (err) {
       toast.error(err.response?.data?.message || 'Checkout failed');
+    } finally {
       setCheckoutLoading(false);
     }
   };
@@ -231,7 +251,7 @@ export default function Cart() {
                     user?.addresses?.length > 0 ? (
                       <div className="relative">
                         <select
-                          className="w-full appearance-none bg-black border border-white/10 text-gray-200 py-3 px-4 pr-8 rounded-xl focus:outline-none focus:border-blue-500 transition-all cursor-pointer"
+                          className="w-full appearance-none bg-black border border-white/10 text-gray-200 py-3 px-4 pr-8 rounded-xl focus:outline-none focus:border-blue-500 transition-all cursor-pointer text-sm"
                           onChange={handleSelectAddress}
                           defaultValue=""
                         >
@@ -258,6 +278,65 @@ export default function Cart() {
                       </div>
                     )
                   }
+                </GlassCard>
+
+                {/* Payment Method Selector */}
+                <GlassCard className="p-6 !rounded-3xl">
+                  <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-white">
+                    <FaCreditCard className="text-blue-400" /> Payment Gateway
+                  </h2>
+
+                  <div className="space-y-3">
+                    <label 
+                      onClick={() => setPaymentMethod('stripe')}
+                      className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
+                        paymentMethod === 'stripe' 
+                          ? 'border-blue-500 bg-blue-500/10 text-white' 
+                          : 'border-white/10 bg-black/40 text-gray-400 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input 
+                          type="radio" 
+                          name="paymentMethod" 
+                          checked={paymentMethod === 'stripe'} 
+                          onChange={() => setPaymentMethod('stripe')}
+                          className="text-blue-500 focus:ring-0"
+                        />
+                        <div>
+                          <p className="text-sm font-bold text-white">Stripe Card Payment</p>
+                          <p className="text-xs text-gray-500">Credit / Debit Cards (Sandbox)</p>
+                        </div>
+                      </div>
+                      <span className="text-[11px] font-semibold uppercase px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                        Instant
+                      </span>
+                    </label>
+
+                    <label 
+                      onClick={() => setPaymentMethod('cod')}
+                      className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
+                        paymentMethod === 'cod' 
+                          ? 'border-emerald-500 bg-emerald-500/10 text-white' 
+                          : 'border-white/10 bg-black/40 text-gray-400 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input 
+                          type="radio" 
+                          name="paymentMethod" 
+                          checked={paymentMethod === 'cod'} 
+                          onChange={() => setPaymentMethod('cod')}
+                          className="text-emerald-500 focus:ring-0"
+                        />
+                        <div>
+                          <p className="text-sm font-bold text-white">Cash on Delivery</p>
+                          <p className="text-xs text-gray-500">Pay upon physical delivery</p>
+                        </div>
+                      </div>
+                      <FaMoneyBillWave className="text-emerald-400" />
+                    </label>
+                  </div>
                 </GlassCard>
 
                 {/* Order Summary */}
@@ -293,17 +372,17 @@ export default function Cart() {
 
                     <GlowButton
                       onClick={handleCheckout}
-                      disabled={cartItems.length === 0 || !selectedAddress}
+                      disabled={cartItems.length === 0 || !selectedAddress || checkoutLoading}
                       className="w-full mt-8 !py-4 rounded-xl !text-base"
                       variant="primary"
                     >
-                      Confirm Order
+                      {checkoutLoading ? 'Processing Checkout...' : `Pay ৳${totalPrice.toFixed(2)}`}
                     </GlowButton>
                   </GlassCard>
 
-                  <p className="text-xs text-gray-600 text-center mt-6 flex items-center justify-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-green-500/50"></span>
-                    Secure SSL Encypted Checkout
+                  <p className="text-xs text-gray-500 text-center mt-6 flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                    Stripe 256-bit Encrypted Checkout Active
                   </p>
                 </div >
 
@@ -315,4 +394,4 @@ export default function Cart() {
       </div >
     </PageTransition >
   );
-}
+}

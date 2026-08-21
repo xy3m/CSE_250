@@ -45,6 +45,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const vendorRoutes = require('./routes/vendorRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
+const paymentRoutes = require('./routes/paymentRoute');
 
 const mongoose = require('mongoose');
 
@@ -69,6 +70,8 @@ app.use('/api/v1', orderRoutes);
 app.use('/api/v1', vendorRoutes);
 app.use('/api/v1', adminRoutes);
 app.use('/api/v1', userRoutes);
+app.use('/api/v1', paymentRoutes);
+
 // Root route
 app.get('/', (req, res) => {
   res.json({

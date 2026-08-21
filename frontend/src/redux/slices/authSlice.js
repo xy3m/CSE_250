@@ -29,6 +29,20 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// 1-Click Demo Login (Admin / Vendor / Customer)
+export const demoLoginUser = createAsyncThunk(
+  'auth/demoLogin',
+  async ({ role }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post('/demo-login', { role });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Demo login failed');
+    }
+  }
+);
+
+
 // Get user profile
 export const getUserProfile = createAsyncThunk(
   'auth/profile',
@@ -114,6 +128,26 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      // --- Demo Login ---
+      .addCase(demoLoginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(demoLoginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        // Set localStorage
+        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        localStorage.setItem('token', action.payload.token);
+      })
+      .addCase(demoLoginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
 
       // --- Get Profile ---
       .addCase(getUserProfile.fulfilled, (state, action) => {

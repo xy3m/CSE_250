@@ -77,15 +77,20 @@ export default function Navbar() {
         </div>
 
         {/* Right Side: Actions */}
-        <div className="flex items-center justify-end gap-6">
+        <div className="flex items-center justify-end gap-5">
           {!isAuthenticated ? (
             <>
+              <Link to="/login" className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 hover:bg-blue-500/20 transition-all">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+                1-Click Demo
+              </Link>
               <Link to="/login" className="text-sm font-medium text-white hover:text-gray-300 transition-colors">Log In</Link>
               <Link to="/register" className="btn-pro-primary !py-1.5 !px-4 !text-sm">
                 Get Started
               </Link>
             </>
           ) : (
+
             <div className="flex items-center gap-4">
               {safeUser.role !== 'vendor' && safeUser.role !== 'admin' && (
                 <>
