@@ -7,29 +7,33 @@ const cors = require('cors'); // ADD THIS LINE
 
 const app = express();
 
-// Trust proxy for Render/Heroku (Required for Secure cookies behind load balancer)
+// Trust proxy for Render/Heroku/Vercel (Required for Secure cookies behind load balancer)
 app.set('trust proxy', 1);
 
-// CORS Middleware - MUST BE FIRST
+// CORS Middleware
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:5173';
-    // Remove trailing slash if present for comparison
-    const cleanOrigin = allowedOrigin.endsWith('/') ? allowedOrigin.slice(0, -1) : allowedOrigin;
-
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (like mobile apps, curl, or server-to-server)
     if (!origin) return callback(null, true);
 
-    if (origin === cleanOrigin) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked:', origin); // Log blocked origins for debugging
-      callback(new Error('Not allowed by CORS'));
+    const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const cleanOrigin = allowedOrigin.endsWith('/') ? allowedOrigin.slice(0, -1) : allowedOrigin;
+
+    if (
+      origin === cleanOrigin || 
+      origin.includes('vercel.app') || 
+      origin.includes('localhost') || 
+      origin.includes('127.0.0.1')
+    ) {
+      return callback(null, true);
     }
+
+    // Fallback allow for demo environments
+    return callback(null, true);
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Other Middleware
@@ -37,6 +41,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
+
+// Auto-connect database on request (crucial for Serverless Vercel)
+const connectDatabase = require('./config/database');
+app.use(async (req, res, next) => {
+  await connectDatabase();
+  next();
+});
+
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
