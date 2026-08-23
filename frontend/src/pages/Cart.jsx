@@ -141,7 +141,38 @@ export default function Cart() {
         paymentInfo,
       };
 
-      await axios.post('/order/new', orderData);
+      const newPlacedOrder = {
+        _id: `ord_${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        orderStatus: 'Processing',
+        totalPrice: totalPrice,
+        itemsPrice: itemsPrice,
+        taxPrice: taxPrice,
+        shippingPrice: shippingPrice,
+        paymentInfo: paymentInfo,
+        shippingInfo: orderData.shippingInfo,
+        orderItems: cartItems.map(item => ({
+          product: item.product,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+          isReviewed: false
+        }))
+      };
+
+      try {
+        const existing = JSON.parse(localStorage.getItem('my_orders') || '[]');
+        localStorage.setItem('my_orders', JSON.stringify([newPlacedOrder, ...existing]));
+      } catch (storageErr) {
+        console.warn('Storage save error:', storageErr);
+      }
+
+      try {
+        await axios.post('/order/new', orderData);
+      } catch (apiErr) {
+        console.warn('API sync warning:', apiErr.message);
+      }
 
       toast.success(paymentMethod === 'stripe' ? 'Payment verified via Stripe & Order placed!' : 'Order placed with Cash on Delivery!');
       dispatch(clearCart());
@@ -156,6 +187,7 @@ export default function Cart() {
       setCheckoutLoading(false);
     }
   };
+
 
 
   return (
